@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { db, schema } from "@/lib/db";
+import { notifyLead } from "@/lib/notify";
 
 const leadSchema = z.object({
   firstName: z.string().trim().min(1, "First name required"),
@@ -36,6 +37,18 @@ export async function POST(request: NextRequest) {
       wantsRealtor: data.wantsRealtor,
       wantsDigest: data.wantsDigest,
     });
+
+    notifyLead({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      phone: data.phone,
+      state: data.state?.toUpperCase() ?? null,
+      zip: data.zip ?? null,
+      wantsRealtor: data.wantsRealtor,
+      matchedGrantIds: data.matchedGrantIds,
+      criteria: data.criteria,
+    }).catch((e) => console.error("notifyLead failed", e));
 
     return Response.json({
       success: true,
