@@ -235,10 +235,12 @@ components:
 
     LeadCapture:
       type: object
-      required: [email, criteria]
+      required: [firstName, lastName, email, phone, criteria]
       properties:
+        firstName: { type: string, description: Buyer's first name. Required. }
+        lastName: { type: string, description: Buyer's last name. Required. }
         email: { type: string, format: email }
-        phone: { type: string }
+        phone: { type: string, description: Phone number. Required. }
         zip: { type: string }
         state: { type: string }
         criteria: { type: object }

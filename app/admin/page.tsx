@@ -106,7 +106,9 @@ export default async function AdminPage() {
             <thead className="bg-zinc-50 text-left text-xs uppercase tracking-wide text-zinc-500">
               <tr>
                 <th className="px-4 py-3">When</th>
+                <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3">Phone</th>
                 <th className="px-4 py-3">State</th>
                 <th className="px-4 py-3">Wants realtor</th>
                 <th className="px-4 py-3"># matches</th>
@@ -115,7 +117,7 @@ export default async function AdminPage() {
             <tbody className="divide-y divide-zinc-100">
               {leads.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-zinc-400">
+                  <td colSpan={7} className="px-4 py-8 text-center text-zinc-400">
                     No leads yet.
                   </td>
                 </tr>
@@ -123,7 +125,9 @@ export default async function AdminPage() {
               {leads.map((l) => (
                 <tr key={l.id}>
                   <td className="px-4 py-3 text-zinc-500">{l.createdAt}</td>
-                  <td className="px-4 py-3 font-medium text-zinc-900">{l.email}</td>
+                  <td className="px-4 py-3 font-medium text-zinc-900">{l.firstName} {l.lastName}</td>
+                  <td className="px-4 py-3 text-zinc-700">{l.email}</td>
+                  <td className="px-4 py-3 text-zinc-700">{l.phone}</td>
                   <td className="px-4 py-3">{l.state ?? "—"}</td>
                   <td className="px-4 py-3">
                     {l.wantsRealtor ? (

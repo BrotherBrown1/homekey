@@ -94,7 +94,7 @@ export default async function GrantDetailPage({ params }: { params: Params }) {
 
       <section className="mt-8 flex flex-wrap items-center gap-3">
         <a
-          href={grant.applicationUrl}
+          href={`/apply/${grant.id}`}
           target="_blank"
           rel="noopener noreferrer"
           className="rounded-full bg-zinc-900 px-6 py-3 font-medium text-white hover:bg-zinc-800"

@@ -11,6 +11,8 @@ export function LeadCaptureBar({
   matchedIds: string[];
 }) {
   const [open, setOpen] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [wantsRealtor, setWantsRealtor] = useState(false);
@@ -25,8 +27,10 @@ export function LeadCaptureBar({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          firstName,
+          lastName,
           email,
-          phone: phone || undefined,
+          phone,
           state: buyer.state,
           criteria: buyer,
           matchedGrantIds: matchedIds,
@@ -87,15 +91,36 @@ export function LeadCaptureBar({
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <input
           required
+          type="text"
+          autoComplete="given-name"
+          placeholder="First name"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          className="rounded-lg bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline focus:outline-2 focus:outline-indigo-400"
+        />
+        <input
+          required
+          type="text"
+          autoComplete="family-name"
+          placeholder="Last name"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          className="rounded-lg bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline focus:outline-2 focus:outline-indigo-400"
+        />
+        <input
+          required
           type="email"
+          autoComplete="email"
           placeholder="Email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="rounded-lg bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline focus:outline-2 focus:outline-indigo-400"
         />
         <input
+          required
           type="tel"
-          placeholder="Phone (optional)"
+          autoComplete="tel"
+          placeholder="Phone number"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           className="rounded-lg bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline focus:outline-2 focus:outline-indigo-400"

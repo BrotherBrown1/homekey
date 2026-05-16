@@ -33,7 +33,7 @@ export default async function ResultsPage({
 }) {
   const params = await searchParams;
   const buyer = parseBuyer(params);
-  const matches = await matchGrants(buyer, { useAi: true, limit: 20 });
+  const matches = await matchGrants(buyer, { useAi: false, limit: 20 });
 
   const totalAmount = matches
     .filter((m) => m.confidence !== "low")
@@ -135,7 +135,7 @@ function GrantCard({ match }: { match: Awaited<ReturnType<typeof matchGrants>>[n
         </div>
         <div className="flex flex-row gap-2 sm:flex-col">
           <a
-            href={grant.applicationUrl}
+            href={`/apply/${grant.id}`}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"

@@ -56,8 +56,10 @@ export type EligibilityRules = {
 
 export const leads = sqliteTable("leads", {
   id: text("id").primaryKey(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
   email: text("email").notNull(),
-  phone: text("phone"),
+  phone: text("phone").notNull(),
   zip: text("zip"),
   state: text("state"),
   criteria: text("criteria", { mode: "json" }).$type<BuyerCriteria>().notNull(),

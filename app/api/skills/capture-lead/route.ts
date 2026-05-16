@@ -4,8 +4,10 @@ import { randomUUID } from "node:crypto";
 import { db, schema } from "@/lib/db";
 
 const leadSchema = z.object({
+  firstName: z.string().trim().min(1, "First name required"),
+  lastName: z.string().trim().min(1, "Last name required"),
   email: z.string().email(),
-  phone: z.string().optional(),
+  phone: z.string().trim().min(7, "Phone required"),
   zip: z.string().optional(),
   state: z.string().length(2).optional(),
   criteria: z.record(z.string(), z.unknown()),
@@ -22,8 +24,10 @@ export async function POST(request: NextRequest) {
     const id = randomUUID();
     await db.insert(schema.leads).values({
       id,
+      firstName: data.firstName,
+      lastName: data.lastName,
       email: data.email,
-      phone: data.phone ?? null,
+      phone: data.phone,
       zip: data.zip ?? null,
       state: data.state?.toUpperCase() ?? null,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

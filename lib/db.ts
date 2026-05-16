@@ -43,8 +43,10 @@ sqlite.exec(`
 
   CREATE TABLE IF NOT EXISTS leads (
     id TEXT PRIMARY KEY,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
     email TEXT NOT NULL,
-    phone TEXT,
+    phone TEXT NOT NULL,
     zip TEXT,
     state TEXT,
     criteria TEXT NOT NULL,
