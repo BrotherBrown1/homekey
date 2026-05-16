@@ -7,7 +7,7 @@ info:
     Import this OpenAPI spec into Orchestrate Builder → Skills → New skill from OpenAPI.
 
 servers:
-  - url: https://YOUR-DEPLOYED-DOMAIN.com
+  - url: https://homekey-psi.vercel.app
     description: Production
   - url: http://localhost:3000
     description: Local dev (use ngrok to expose to Orchestrate)
