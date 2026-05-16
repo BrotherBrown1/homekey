@@ -76,16 +76,33 @@ let seeded = false;
 export async function ensureSeeded() {
   if (seeded) return;
   const row = sqlite.prepare("SELECT COUNT(*) as c FROM grants").get() as { c: number };
-  if (row.c > 0) {
-    seeded = true;
-    return;
+  if (row.c === 0) {
+    const { FEDERAL_GRANTS } = await import("./data/seed-federal");
+    const { STATE_GRANTS } = await import("./data/seed-states");
+    const { LOCAL_GRANTS } = await import("./data/seed-local");
+    const all = [...FEDERAL_GRANTS, ...STATE_GRANTS, ...LOCAL_GRANTS];
+    for (const g of all) {
+      await db.insert(schema.grants).values(g);
+    }
   }
-  const { FEDERAL_GRANTS } = await import("./data/seed-federal");
-  const { STATE_GRANTS } = await import("./data/seed-states");
-  const { LOCAL_GRANTS } = await import("./data/seed-local");
-  const all = [...FEDERAL_GRANTS, ...STATE_GRANTS, ...LOCAL_GRANTS];
-  for (const g of all) {
-    await db.insert(schema.grants).values(g);
+
+  // Demo data: on cold start with an empty leads/update_log table, seed a
+  // couple realistic-looking entries so /admin doesn't look dead during a
+  // live demo. Skip if DEMO_MODE=false is set explicitly (production).
+  if (process.env.DEMO_MODE !== "false") {
+    const leadCount = (
+      sqlite.prepare("SELECT COUNT(*) as c FROM leads").get() as { c: number }
+    ).c;
+    if (leadCount === 0) {
+      const { seedDemoLeads, seedDemoUpdateLog } = await import("./data/seed-demo");
+      for (const lead of seedDemoLeads) {
+        await db.insert(schema.leads).values(lead);
+      }
+      for (const entry of seedDemoUpdateLog) {
+        await db.insert(schema.updateLog).values(entry);
+      }
+    }
   }
+
   seeded = true;
 }
