@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
 import { and, eq, like, or, SQL } from "drizzle-orm";
-import { db, schema } from "@/lib/db";
+import { db, schema, ensureSeeded } from "@/lib/db";
 
 export async function GET(request: NextRequest) {
+  await ensureSeeded();
   const params = request.nextUrl.searchParams;
   const state = params.get("state");
   const level = params.get("level");
