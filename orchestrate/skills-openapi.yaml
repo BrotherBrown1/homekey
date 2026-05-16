@@ -1,0 +1,264 @@
+openapi: 3.0.3
+info:
+  title: HomeKey Skills API
+  version: 1.0.0
+  description: |
+    HTTP endpoints that watsonx Orchestrate agents call as tools.
+    Import this OpenAPI spec into Orchestrate Builder → Skills → New skill from OpenAPI.
+
+servers:
+  - url: https://YOUR-DEPLOYED-DOMAIN.com
+    description: Production
+  - url: http://localhost:3000
+    description: Local dev (use ngrok to expose to Orchestrate)
+
+paths:
+  /api/skills/match-grants:
+    post:
+      operationId: matchGrants
+      summary: Find grants a buyer qualifies for
+      description: |
+        Given a buyer's profile, returns ranked grants with eligibility reasoning.
+        Use this as the primary skill for the HomeKey Buyer Advisor agent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BuyerProfile'
+      responses:
+        '200':
+          description: Ranked grant matches
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchResponse'
+
+  /api/skills/get-grant:
+    get:
+      operationId: getGrant
+      summary: Fetch full details for a single grant
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Grant details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrantDetail'
+
+  /api/skills/list-grants:
+    get:
+      operationId: listGrants
+      summary: List active grants (optional state filter)
+      description: Used by the Curator agent to know what's in the DB.
+      parameters:
+        - in: query
+          name: state
+          schema:
+            type: string
+            description: 2-letter state code (e.g. "MI"). Returns federal + that state's grants.
+        - in: query
+          name: level
+          schema:
+            type: string
+            enum: [federal, state, county, city]
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 100
+      responses:
+        '200':
+          description: List of grants
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrantList'
+
+  /api/skills/capture-lead:
+    post:
+      operationId: captureLead
+      summary: Save a buyer lead + match history
+      description: |
+        Called after a buyer wants to be contacted by a realtor or wants the
+        weekly digest. The realtor (Christian) is notified out-of-band.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadCapture'
+      responses:
+        '200':
+          description: Lead saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  leadId: { type: string }
+                  message: { type: string }
+
+  /api/skills/upsert-grant:
+    post:
+      operationId: proposeGrantChange
+      summary: Curator-only — propose a grant change for human review
+      description: |
+        The Curator agent posts here when it detects a new program, changed
+        amount, or ended program. NEVER writes to grants directly; always
+        queues for human approval at /admin.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeProposal'
+      responses:
+        '200':
+          description: Proposal logged
+    get:
+      operationId: listPendingProposals
+      summary: Curator-only — list pending proposals
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Pending changes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  pending:
+                    type: array
+                    items: { type: object }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Set the CURATOR_AGENT_TOKEN env var; the Curator agent uses this token.
+
+  schemas:
+    BuyerProfile:
+      type: object
+      required: [state, annualIncome]
+      properties:
+        state:
+          type: string
+          description: 2-letter state code (e.g., "MI", "CA")
+          example: "MI"
+        zip: { type: string }
+        city: { type: string }
+        county: { type: string }
+        householdSize:
+          type: integer
+          minimum: 1
+          maximum: 15
+          default: 1
+        annualIncome:
+          type: integer
+          description: Household income in USD
+          example: 65000
+        targetPurchasePrice:
+          type: integer
+          example: 180000
+        creditScore:
+          type: integer
+          minimum: 300
+          maximum: 850
+        firstTimeBuyer: { type: boolean, default: true }
+        veteran: { type: boolean, default: false }
+        activeMilitary: { type: boolean, default: false }
+        profession:
+          type: string
+          description: e.g., "teacher", "firefighter", "nurse"
+        ownerOccupied: { type: boolean, default: true }
+        useAi:
+          type: boolean
+          default: true
+          description: When true, watsonx.ai is used to refine scoring.
+        limit: { type: integer, default: 15 }
+
+    MatchResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        count: { type: integer }
+        matches:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              name: { type: string }
+              sponsor: { type: string }
+              level: { type: string }
+              programType: { type: string }
+              amountDescription: { type: string }
+              summary: { type: string }
+              finalScore: { type: integer, description: "0-100 match score" }
+              confidence: { type: string, enum: [high, medium, low] }
+              whyQualify:
+                type: array
+                items: { type: string }
+              whyDisqualify:
+                type: array
+                items: { type: string }
+              applicationUrl: { type: string }
+
+    GrantDetail:
+      type: object
+      properties:
+        success: { type: boolean }
+        grant: { type: object }
+
+    GrantList:
+      type: object
+      properties:
+        success: { type: boolean }
+        count: { type: integer }
+        grants:
+          type: array
+          items: { type: object }
+
+    LeadCapture:
+      type: object
+      required: [email, criteria]
+      properties:
+        email: { type: string, format: email }
+        phone: { type: string }
+        zip: { type: string }
+        state: { type: string }
+        criteria: { type: object }
+        matchedGrantIds:
+          type: array
+          items: { type: string }
+        wantsRealtor:
+          type: boolean
+          description: True if the buyer wants Christian to follow up as a realtor.
+        wantsDigest:
+          type: boolean
+          default: true
+
+    ChangeProposal:
+      type: object
+      required: [source, changeType, diff]
+      properties:
+        source: { type: string, format: uri }
+        changeType: { type: string, enum: [new, modified, removed] }
+        grantId: { type: string }
+        diff:
+          type: object
+          description: Field-level diff or full new-grant payload.

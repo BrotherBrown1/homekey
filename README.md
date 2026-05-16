@@ -1,36 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HomeKey — Find the grants that unlock your first home
 
-## Getting Started
+A buyer-facing grant-matching app powered by two **IBM watsonx Orchestrate** agents and the **watsonx.ai** Granite foundation model.
 
-First, run the development server:
+- **HomeKey Buyer Advisor** (conversational): interviews a buyer, calls our REST skills API, returns ranked matches with personalized "why you qualify" reasoning.
+- **HomeKey Curator** (scheduled): scrapes every housing-finance-agency source URL weekly, uses watsonx.ai to detect material changes, and queues diffs for human review at `/admin`.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Built for the IBM watsonx hackathon. Designed as a long-term lead-generation channel for a Michigan real-estate practice.
+
+## What's in the database
+
+| Level | Count |
+|---|---|
+| Federal | 12 |
+| State (all 50 + DC) | 56 |
+| County | 5 |
+| City | 9 |
+| **Total** | **82** |
+
+…and growing. The Curator agent finds new programs and amount changes weekly.
+
+## Architecture
+
+```
+┌────────────────────┐         ┌─────────────────────────────────────┐
+│ watsonx Orchestrate│         │  HomeKey Next.js app (this repo)    │
+│                    │         │                                     │
+│  Buyer Advisor ────┼────────►│  /api/skills/match-grants           │
+│  (chat agent)      │         │  /api/skills/get-grant              │
+│                    │         │  /api/skills/list-grants            │
+│  Curator ──────────┼────────►│  /api/skills/capture-lead           │
+│  (scheduled)       │         │  /api/skills/upsert-grant (admin)   │
+│                    │         │                                     │
+│  ▲                 │         │  ┌──────────────────────────────┐   │
+│  │ both call       │         │  │ watsonx.ai (Granite 3 8B)    │◄──┤
+│  │ foundation model│         │  │ via lib/watsonx.ts           │   │
+│  ▼                 │         │  └──────────────────────────────┘   │
+│  watsonx.ai        │         │                                     │
+└────────────────────┘         │  SQLite (Drizzle ORM)               │
+                               │  82 grants · leads · update_log     │
+                               └─────────────────────────────────────┘
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend / API**: Next.js 16 (App Router), Tailwind v4, TypeScript
+- **DB**: SQLite via Drizzle ORM
+- **LLM**: IBM watsonx.ai (Granite 3 8B Instruct, configurable)
+- **Agents**: IBM watsonx Orchestrate (2 agents)
+- **Hosting**: Vercel (recommended) or any Node 20+ host
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Getting started
 
-## Learn More
+```bash
+git clone <this-repo>
+cd grant-finder
+npm install
 
-To learn more about Next.js, take a look at the following resources:
+# Provision the SQLite DB
+npm run db:push
+npm run db:seed
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Configure IBM credentials (see IBM_SETUP.md)
+cp .env.example .env.local
+# edit .env.local with your IBM_CLOUD_API_KEY and WATSONX_PROJECT_ID
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Run the app
+npm run dev
+# → http://localhost:3000
+```
 
-## Deploy on Vercel
+## Running the Curator agent
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+# Once .env.local has IBM credentials + CURATOR_AGENT_TOKEN set:
+npm run curator
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This iterates every active grant, fetches its source URL, asks watsonx.ai whether the page has changed since we stored it, and queues diffs to `/admin` for review.
+
+## Routes
+
+| Path | Purpose |
+|---|---|
+| `/` | Marketing landing page |
+| `/onboarding` | 5-step buyer profile wizard |
+| `/results?...` | Ranked grant matches |
+| `/grant/[id]` | Full grant detail |
+| `/admin` | Pending Curator diffs + recent leads |
+| `/api/skills/match-grants` | POST — buyer profile → ranked matches |
+| `/api/skills/get-grant?id=...` | GET — single grant detail |
+| `/api/skills/list-grants?state=...` | GET — list of active grants |
+| `/api/skills/capture-lead` | POST — save buyer email + match history |
+| `/api/skills/upsert-grant` | POST — Curator only, propose a change |
+
+## Project structure
+
+```
+app/                     Next.js app router
+  page.tsx               Landing page
+  onboarding/page.tsx    Buyer wizard
+  results/page.tsx       Matched grants
+  grant/[id]/page.tsx    Grant detail
+  admin/page.tsx         Diff review + leads
+  api/skills/*           REST endpoints called by Orchestrate skills
+components/
+  LeadCaptureBar.tsx     Soft email capture on results
+lib/
+  config.ts              Brand constants (rename HomeKey here)
+  schema.ts              Drizzle tables + types
+  db.ts                  SQLite connection
+  watsonx.ts             watsonx.ai chat client
+  matcher.ts             Rule + AI grant-matching engine
+  data/
+    seed-federal.ts      12 federal programs
+    seed-states.ts       56 state HFA programs
+    seed-local.ts        14 county/city programs
+orchestrate/
+  skills-openapi.yaml    Import into Orchestrate Builder
+  AGENT_1_BUYER_ADVISOR.md   Step-by-step setup
+  AGENT_2_CURATOR.md         Step-by-step setup
+scripts/
+  seed.ts                Load grants into SQLite
+  curator-run.ts         Standalone Curator (or trigger via Orchestrate)
+IBM_SETUP.md             watsonx.ai + Orchestrate provisioning guide
+SUBMISSION.md            Hackathon submission text
+DEMO_VIDEO.md            Recording script
+```
+
+## License
+
+MIT. Built by Christian Brown (myrealtorbrown@gmail.com).
