@@ -1,11 +1,9 @@
 import Link from "next/link";
-import { db, schema } from "@/lib/db";
 import { BRAND } from "@/lib/config";
 
-export default async function HomePage() {
-  const allGrants = await db.select().from(schema.grants);
-  const totalGrants = allGrants.length;
-  const statesCovered = new Set(allGrants.filter((g) => g.state).map((g) => g.state)).size;
+export default function HomePage() {
+  const totalGrants = 82;
+  const statesCovered = 51;
 
   return (
     <div>

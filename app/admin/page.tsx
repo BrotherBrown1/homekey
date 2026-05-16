@@ -1,9 +1,10 @@
-import { db, schema } from "@/lib/db";
+import { db, schema, ensureSeeded } from "@/lib/db";
 import { desc, eq } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
+  await ensureSeeded();
   const [grants, pendingProposals, leads] = await Promise.all([
     db.select().from(schema.grants),
     db

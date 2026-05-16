@@ -1,5 +1,5 @@
 import { eq, or, and, inArray, isNull } from "drizzle-orm";
-import { db, schema } from "./db";
+import { db, schema, ensureSeeded } from "./db";
 import type { BuyerCriteria, Grant } from "./schema";
 import { chatJson, isConfigured as watsonxConfigured } from "./watsonx";
 
@@ -220,6 +220,7 @@ export async function matchGrants(
   buyer: BuyerCriteria,
   options: { useAi?: boolean; limit?: number } = {}
 ): Promise<MatchedGrant[]> {
+  await ensureSeeded();
   const useAi = options.useAi !== false; // default true
   const limit = options.limit ?? 30;
 
@@ -279,11 +280,13 @@ export async function matchGrants(
 
 // Fetch a grant by ID (used in detail page + skills API).
 export async function getGrantById(id: string): Promise<Grant | null> {
+  await ensureSeeded();
   const rows = await db.select().from(schema.grants).where(eq(schema.grants.id, id));
   return rows[0] ?? null;
 }
 
 // Fetch all active grants (used by curator agent).
 export async function listActiveGrants(): Promise<Grant[]> {
+  await ensureSeeded();
   return db.select().from(schema.grants).where(eq(schema.grants.status, "active"));
 }

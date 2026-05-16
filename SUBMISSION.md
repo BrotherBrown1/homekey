@@ -48,7 +48,7 @@ The Orchestrate + watsonx.ai pairing lets one realtor maintain a national grant 
 
 ## Code repository
 
-`[GitHub URL goes here once pushed — see GIT_PUSH.md]`
+https://github.com/BrotherBrown1/homekey
 
 ---
 
