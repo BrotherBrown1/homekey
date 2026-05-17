@@ -134,14 +134,12 @@ function GrantCard({ match }: { match: Awaited<ReturnType<typeof matchGrants>>[n
           )}
         </div>
         <div className="flex flex-row gap-2 sm:flex-col">
-          <a
+          <Link
             href={`/apply/${grant.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
             className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
           >
             Apply →
-          </a>
+          </Link>
           <Link
             href={`/grant/${grant.id}`}
             className="rounded-full bg-white px-4 py-2 text-sm font-medium text-zinc-900 ring-1 ring-zinc-200 hover:bg-zinc-50"
