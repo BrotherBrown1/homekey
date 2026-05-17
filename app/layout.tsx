@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BRAND } from "@/lib/config";
-import { NovaWordmark } from "@/components/NovaWordmark";
 import "./globals.css";
 
 const SITE_URL = "https://homekey-psi.vercel.app";
@@ -113,9 +112,13 @@ export default function RootLayout({
             <Link
               href="/"
               aria-label={BRAND.name}
-              className="text-zinc-950"
+              style={{
+                fontFamily:
+                  '"SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif',
+              }}
+              className="text-[17px] font-semibold uppercase leading-none tracking-[0.34em] text-zinc-950"
             >
-              <NovaWordmark height={18} />
+              {BRAND.name.toUpperCase()}
             </Link>
             <nav className="flex items-center gap-7 text-xs uppercase tracking-[0.12em] text-zinc-600">
               <Link href="/onboarding" className="hover:text-zinc-950">
@@ -137,9 +140,15 @@ export default function RootLayout({
         <footer className="border-t border-zinc-200 bg-white">
           <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-16 sm:grid-cols-2">
             <div>
-              <div className="text-zinc-950">
-                <NovaWordmark height={20} />
-              </div>
+              <p
+                style={{
+                  fontFamily:
+                    '"SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif',
+                }}
+                className="text-[19px] font-semibold uppercase tracking-[0.34em] text-zinc-950"
+              >
+                {BRAND.name.toUpperCase()}
+              </p>
               <p className="mt-4 max-w-md text-sm leading-relaxed text-zinc-600">
                 First-time home buyer grant finder. Federal, state, county, and
                 city programs.
