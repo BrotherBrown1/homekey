@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BRAND } from "@/lib/config";
+import { CountUp } from "@/components/CountUp";
 
 export default function HomePage() {
   return (
@@ -35,7 +36,7 @@ export default function HomePage() {
       <FullBleed bg="bg-zinc-950" text="text-white" align="end">
         <Eyebrow tone="dark">The opportunity</Eyebrow>
         <Headline>
-          $18,400.
+          $<CountUp value={18400} className="tabular-nums" duration={1800} />.
           <br />
           On average, in your name.
         </Headline>
@@ -252,18 +253,20 @@ function Step({ n, title, body }: { n: string; title: string; body: string }) {
 }
 
 function FreshnessStats() {
-  const items: Array<[string, string]> = [
-    ["12", "Federal programs"],
-    ["51+", "States covered"],
-    ["19+", "City & county programs"],
-    ["7 days", "Max data age"],
+  const items: Array<{ value: number; suffix?: string; label: string }> = [
+    { value: 12, label: "Federal programs" },
+    { value: 48, suffix: "+", label: "States covered" },
+    { value: 30, suffix: "+", label: "City & county programs" },
+    { value: 7, suffix: " days", label: "Max data age" },
   ];
   return (
     <div className="mt-12 grid w-full max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-3xl bg-white/10 sm:grid-cols-4">
-      {items.map(([v, l]) => (
-        <div key={l} className="bg-zinc-950 p-6">
-          <p className="text-3xl font-semibold tracking-tight sm:text-4xl">{v}</p>
-          <p className="mt-2 text-sm text-zinc-400">{l}</p>
+      {items.map((item) => (
+        <div key={item.label} className="bg-zinc-950 p-6">
+          <p className="text-3xl font-semibold tracking-tight tabular-nums sm:text-4xl">
+            <CountUp value={item.value} suffix={item.suffix} />
+          </p>
+          <p className="mt-2 text-sm text-zinc-400">{item.label}</p>
         </div>
       ))}
     </div>
