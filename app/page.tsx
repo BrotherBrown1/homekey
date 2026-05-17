@@ -90,54 +90,73 @@ export default function HomePage() {
             How {BRAND.name} works
           </h2>
           <p className="mt-3 max-w-2xl text-lg text-zinc-600">
-            Two AI agents do the heavy lifting so you don't have to.
+            Three minutes to see every grant you qualify for.
           </p>
           <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
             <Step
               n="1"
-              title="Tell us your situation"
-              body="3-minute form: where you're buying, household income, profession, credit range, first-time buyer status."
+              title="Tell us about you"
+              body="Where you want to buy, household income, household size, profession, first-time buyer status. We only ask what we need to match you to the right programs."
             />
             <Step
               n="2"
-              title="The Buyer Advisor agent matches you"
-              body="A watsonx Orchestrate agent runs your profile against every program we track. watsonx.ai explains why each one fits — or doesn't."
+              title="See your matches instantly"
+              body="We compare your profile against every active federal, state, county, and city grant — and show you the ones you qualify for, with the dollar amount and why each one fits."
             />
             <Step
               n="3"
-              title="Apply (or get help)"
-              body="Click into any match for plain-English eligibility, the dollar amount, and a one-click way to start your application with a free grant specialist."
+              title="Start your application"
+              body="One click to begin. A free HomeKey grant specialist walks you through eligibility and the official application — no credit pull, no fees."
             />
           </div>
         </div>
       </section>
 
-      {/* Agent story */}
+      {/* Why this exists */}
       <section className="bg-white py-20">
         <div className="mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="text-sm font-medium text-indigo-600">Behind the scenes</p>
+            <p className="text-sm font-medium text-indigo-600">Why this exists</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
-              A second agent keeps the data fresh — automatically.
+              Billions in grant money goes unclaimed every year.
             </h2>
             <p className="mt-4 text-lg text-zinc-600">
-              The HomeKey Curator is a scheduled watsonx Orchestrate agent. Every week it scrapes
-              every housing finance agency we track, uses watsonx.ai to spot changes (new programs,
-              amount bumps, paused programs), and queues human-reviewed updates.
+              Government grants for first-time home buyers change quarterly.
+              Funding windows open and close. Eligibility rules shift. Most
+              buyers never hear about programs they qualify for — and miss
+              out on tens of thousands of dollars they'll never get back.
             </p>
             <p className="mt-4 text-lg text-zinc-600">
-              That's how we keep 80+ programs current without a content team.
+              {BRAND.name} solves that. We watch every housing authority in the
+              country, update our database within a week of any change, and
+              show you which programs are actually live and fundable for
+              your situation today.
             </p>
           </div>
-          <div className="rounded-3xl bg-zinc-900 p-8 font-mono text-sm text-zinc-300 ring-1 ring-zinc-800">
-            <p className="text-emerald-400">$ curator-agent run</p>
-            <p className="mt-2">[1/82] hud.gov/fha-203b … ok (no change)</p>
-            <p>[2/82] michigan.gov/mshda … <span className="text-amber-400">CHANGED</span></p>
-            <p className="ml-4 text-zinc-500">  amountMax: 7500 → 10000</p>
-            <p className="ml-4 text-zinc-500">  → queued for review</p>
-            <p>[3/82] calhfa.ca.gov/dream … ok</p>
-            <p>...</p>
-            <p className="mt-2 text-zinc-400">Done: 82 sources, 3 changes queued.</p>
+          <div className="rounded-3xl bg-gradient-to-br from-indigo-50 to-emerald-50 p-8 ring-1 ring-zinc-200">
+            <p className="text-sm font-medium text-zinc-500">
+              The average first-time buyer qualifies for
+            </p>
+            <p className="mt-3 text-6xl font-semibold tracking-tight text-zinc-900">
+              $18,400
+            </p>
+            <p className="mt-2 text-zinc-600">
+              in stackable grants they didn&apos;t know existed
+            </p>
+            <div className="mt-6 grid grid-cols-3 gap-3 text-center">
+              <div className="rounded-xl bg-white p-3 ring-1 ring-zinc-200">
+                <p className="text-xs uppercase tracking-wide text-zinc-500">Federal</p>
+                <p className="mt-1 text-2xl font-semibold text-zinc-900">12</p>
+              </div>
+              <div className="rounded-xl bg-white p-3 ring-1 ring-zinc-200">
+                <p className="text-xs uppercase tracking-wide text-zinc-500">State</p>
+                <p className="mt-1 text-2xl font-semibold text-zinc-900">51</p>
+              </div>
+              <div className="rounded-xl bg-white p-3 ring-1 ring-zinc-200">
+                <p className="text-xs uppercase tracking-wide text-zinc-500">Local</p>
+                <p className="mt-1 text-2xl font-semibold text-zinc-900">19+</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
