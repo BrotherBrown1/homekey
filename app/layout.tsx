@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Orbitron } from "next/font/google";
 import { BRAND } from "@/lib/config";
 import "./globals.css";
+
+// Orbitron — sharp, geometric, rectilinear letterforms (Tesla-like).
+// Used only for the NOVA wordmark in the header and footer.
+const wordmark = Orbitron({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-wordmark",
+});
 
 const SITE_URL = "https://homekey-psi.vercel.app";
 
@@ -97,7 +106,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" className={`${wordmark.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-white text-zinc-950">
         <script
           type="application/ld+json"
@@ -112,7 +121,7 @@ export default function RootLayout({
             <Link
               href="/"
               aria-label={BRAND.name}
-              className="text-[15px] font-medium uppercase leading-none tracking-[0.42em] text-zinc-950"
+              className="font-[family-name:var(--font-wordmark)] text-[17px] font-medium uppercase leading-none tracking-[0.32em] text-zinc-950"
             >
               {BRAND.name.toUpperCase()}
             </Link>
@@ -136,7 +145,7 @@ export default function RootLayout({
         <footer className="border-t border-zinc-200 bg-white">
           <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-16 sm:grid-cols-2">
             <div>
-              <p className="text-[15px] font-medium uppercase tracking-[0.42em] text-zinc-950">
+              <p className="font-[family-name:var(--font-wordmark)] text-[17px] font-medium uppercase tracking-[0.32em] text-zinc-950">
                 {BRAND.name.toUpperCase()}
               </p>
               <p className="mt-4 max-w-md text-sm leading-relaxed text-zinc-600">
