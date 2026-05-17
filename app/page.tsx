@@ -114,9 +114,11 @@ export default function HomePage() {
           Always.
         </Headline>
         <Subline>
-          {BRAND.name} doesn&apos;t charge buyers. No fees, no credit pull, no
-          data sold. It exists so the money governments set aside for
-          first-time home buyers actually reaches them.
+          {BRAND.name}
+          {" "}
+          doesn&apos;t charge buyers. No fees, no credit pull, no data sold. It
+          exists so the money governments set aside for first-time home buyers
+          actually reaches them.
         </Subline>
         <CtaPair
           primary={{ href: "/onboarding", label: "Find my grants" }}
