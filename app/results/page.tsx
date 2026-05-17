@@ -133,16 +133,16 @@ function GrantCard({ match }: { match: Awaited<ReturnType<typeof matchGrants>>[n
             </p>
           )}
         </div>
-        <div className="flex flex-row gap-2 sm:flex-col">
+        <div className="flex flex-col gap-2 sm:w-44 sm:flex-none">
           <Link
             href={`/apply/${grant.id}`}
-            className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+            className="rounded-full bg-zinc-900 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-zinc-800 active:bg-zinc-700"
           >
             Apply →
           </Link>
           <Link
             href={`/grant/${grant.id}`}
-            className="rounded-full bg-white px-4 py-2 text-sm font-medium text-zinc-900 ring-1 ring-zinc-200 hover:bg-zinc-50"
+            className="rounded-full bg-white px-4 py-2.5 text-center text-sm font-medium text-zinc-900 ring-1 ring-zinc-200 hover:bg-zinc-50 active:bg-zinc-100"
           >
             Details
           </Link>
