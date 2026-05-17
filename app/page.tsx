@@ -24,8 +24,7 @@ export default function HomePage() {
           <br className="hidden sm:block" /> your first home.
         </Headline>
         <Subline>
-          Every federal, state, county, and city program you qualify for.
-          Free. Three minutes.
+          Federal, state, county, and city programs you qualify for in 3 minutes.
         </Subline>
         <CtaPair
           primary={{ href: "/onboarding", label: "Find my grants" }}
@@ -116,9 +115,9 @@ export default function HomePage() {
         <Subline>
           {BRAND.name}
           {" "}
-          doesn&apos;t charge buyers. No fees, no credit pull, no data sold. It
-          exists so the money governments set aside for first-time home buyers
-          actually reaches them.
+          doesn&apos;t charge buyers any fees, no credit pulls. It exists so
+          the money governments set aside for first-time home buyers actually
+          reaches them.
         </Subline>
         <CtaPair
           primary={{ href: "/onboarding", label: "Find my grants" }}
