@@ -54,26 +54,28 @@ export function LeadCaptureBar({
 
   if (status === "ok") {
     return (
-      <div className="mt-6 rounded-2xl bg-emerald-50 p-5 ring-1 ring-emerald-200">
-        <p className="font-medium text-emerald-900">✓ {message}</p>
+      <div className="mt-10 border-y border-emerald-200 bg-emerald-50 px-6 py-5">
+        <p className="text-sm font-medium text-emerald-900">✓ {message}</p>
       </div>
     );
   }
 
   if (!open) {
     return (
-      <div className="mt-6 rounded-2xl bg-zinc-900 p-5 text-white">
-        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-10 bg-zinc-950 px-6 py-6 text-white sm:px-10 sm:py-8">
+        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="font-medium">Want these matches in your inbox?</p>
-            <p className="text-sm text-zinc-300">
+            <p className="text-lg font-medium tracking-[-0.01em]">
+              Want these matches in your inbox?
+            </p>
+            <p className="mt-1 text-sm text-zinc-400">
               We'll alert you when new programs in your area launch.
             </p>
           </div>
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="rounded-full bg-white px-5 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
+            className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-white px-6 py-3 text-xs font-medium uppercase tracking-[0.12em] text-zinc-950 transition hover:bg-zinc-100"
           >
             Save my matches
           </button>
@@ -85,9 +87,11 @@ export function LeadCaptureBar({
   return (
     <form
       onSubmit={submit}
-      className="mt-6 rounded-2xl bg-zinc-900 p-5 text-white"
+      className="mt-10 bg-zinc-950 px-6 py-6 text-white sm:px-10 sm:py-8"
     >
-      <p className="font-medium">Save my matches + get the weekly digest</p>
+      <p className="text-lg font-medium tracking-[-0.01em]">
+        Save my matches & get the weekly digest
+      </p>
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <input
           required
@@ -96,7 +100,7 @@ export function LeadCaptureBar({
           placeholder="First name"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          className="rounded-lg bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline focus:outline-2 focus:outline-indigo-400"
+          className="border-0 border-b border-white/20 bg-transparent px-1 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-white focus:outline-none"
         />
         <input
           required
@@ -105,7 +109,7 @@ export function LeadCaptureBar({
           placeholder="Last name"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          className="rounded-lg bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline focus:outline-2 focus:outline-indigo-400"
+          className="border-0 border-b border-white/20 bg-transparent px-1 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-white focus:outline-none"
         />
         <input
           required
@@ -114,7 +118,7 @@ export function LeadCaptureBar({
           placeholder="Email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded-lg bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline focus:outline-2 focus:outline-indigo-400"
+          className="border-0 border-b border-white/20 bg-transparent px-1 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-white focus:outline-none"
         />
         <input
           required
@@ -123,30 +127,30 @@ export function LeadCaptureBar({
           placeholder="Phone number"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className="rounded-lg bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline focus:outline-2 focus:outline-indigo-400"
+          className="border-0 border-b border-white/20 bg-transparent px-1 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-white focus:outline-none"
         />
       </div>
-      <label className="mt-3 flex items-center gap-2 text-sm text-zinc-200">
+      <label className="mt-6 flex items-center gap-3 text-sm text-zinc-300">
         <input
           type="checkbox"
           checked={wantsRealtor}
           onChange={(e) => setWantsRealtor(e.target.checked)}
-          className="accent-indigo-500"
+          className="h-4 w-4 accent-white"
         />
         Have a grant specialist contact me to help me apply
       </label>
-      <div className="mt-4 flex items-center gap-3">
+      <div className="mt-6 flex items-center gap-5">
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500 px-5 py-2 text-sm font-medium text-white hover:from-indigo-600 hover:to-emerald-600 disabled:opacity-60"
+          className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-white px-6 py-3 text-xs font-medium uppercase tracking-[0.12em] text-zinc-950 transition hover:bg-zinc-100 disabled:opacity-60"
         >
-          {status === "submitting" ? "Saving..." : "Save matches"}
+          {status === "submitting" ? "Saving…" : "Save matches"}
         </button>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="text-sm text-zinc-400 hover:text-white"
+          className="text-xs uppercase tracking-[0.12em] text-zinc-400 hover:text-white"
         >
           Cancel
         </button>

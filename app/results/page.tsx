@@ -77,23 +77,25 @@ export default async function ResultsPage({
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
-      <div className="rounded-3xl bg-gradient-to-br from-indigo-50 via-white to-emerald-50 p-8 ring-1 ring-zinc-200">
-        <p className="text-xs font-medium uppercase tracking-wide text-indigo-600">
+      <div className="border-b border-zinc-200 pb-10">
+        <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
           Your matches
         </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
-          We found <span className="text-indigo-600">{grantMatches.length}</span> grants and{" "}
-          <span className="text-zinc-700">{loanMatches.length}</span> loan programs you may qualify for in{" "}
-          {buyer.city ? `${buyer.city}, ` : ""}
-          {buyer.state}.
+        <h1 className="mt-4 text-4xl font-semibold leading-[1.05] tracking-[-0.025em] text-zinc-950 sm:text-6xl">
+          {grantMatches.length} grants.{" "}
+          <span className="text-zinc-500">{loanMatches.length} loan programs.</span>
+          <br className="hidden sm:block" />
+          <span className="text-zinc-500">
+            {" "}{buyer.city ? `${buyer.city}, ` : ""}{buyer.state}.
+          </span>
         </h1>
         {totalAmount > 0 && (
-          <p className="mt-3 text-lg text-zinc-600">
-            Estimated maximum stackable grant benefit:{" "}
-            <span className="font-semibold text-zinc-900">
+          <p className="mt-6 text-lg text-zinc-600 sm:text-xl">
+            Up to{" "}
+            <span className="font-semibold text-zinc-950">
               ${totalAmount.toLocaleString()}
             </span>{" "}
-            <span className="text-zinc-500">(some programs can be combined)</span>
+            in stackable grant benefit.
           </p>
         )}
       </div>
@@ -103,31 +105,31 @@ export default async function ResultsPage({
       <div
         role="tablist"
         aria-label="Filter by program type"
-        className="mt-8 flex gap-1 rounded-full bg-zinc-100 p-1"
+        className="mt-10 flex gap-8 border-b border-zinc-200 text-sm uppercase tracking-[0.12em]"
       >
         <Link
           href={grantsHref}
           role="tab"
           aria-selected={activeTab === "grants"}
-          className={`flex-1 rounded-full px-4 py-2 text-center text-sm font-medium transition ${
+          className={`-mb-px border-b-2 py-3 transition ${
             activeTab === "grants"
-              ? "bg-white text-zinc-900 shadow-sm ring-1 ring-zinc-200"
-              : "text-zinc-600 hover:text-zinc-900"
+              ? "border-zinc-950 text-zinc-950"
+              : "border-transparent text-zinc-500 hover:text-zinc-950"
           }`}
         >
-          Grants <span className="ml-1 text-xs text-zinc-500">({grantMatches.length})</span>
+          Grants <span className="ml-1.5 text-zinc-400">{grantMatches.length}</span>
         </Link>
         <Link
           href={loansHref}
           role="tab"
           aria-selected={activeTab === "loans"}
-          className={`flex-1 rounded-full px-4 py-2 text-center text-sm font-medium transition ${
+          className={`-mb-px border-b-2 py-3 transition ${
             activeTab === "loans"
-              ? "bg-white text-zinc-900 shadow-sm ring-1 ring-zinc-200"
-              : "text-zinc-600 hover:text-zinc-900"
+              ? "border-zinc-950 text-zinc-950"
+              : "border-transparent text-zinc-500 hover:text-zinc-950"
           }`}
         >
-          Loans <span className="ml-1 text-xs text-zinc-500">({loanMatches.length})</span>
+          Loans <span className="ml-1.5 text-zinc-400">{loanMatches.length}</span>
         </Link>
       </div>
 
@@ -164,9 +166,9 @@ export default async function ResultsPage({
 function GrantCard({ match }: { match: Awaited<ReturnType<typeof matchGrants>>[number] }) {
   const { grant, confidence, whyQualify, whyDisqualify } = match;
   const tier = {
-    high: { label: "Optimal match", classes: "bg-emerald-100 text-emerald-800 ring-emerald-200" },
-    medium: { label: "Great match", classes: "bg-amber-100 text-amber-800 ring-amber-200" },
-    low: { label: "Good match", classes: "bg-zinc-100 text-zinc-700 ring-zinc-200" },
+    high: { label: "Optimal match", classes: "bg-emerald-100 text-emerald-800 ring-emerald-200", text: "text-emerald-700" },
+    medium: { label: "Great match", classes: "bg-amber-100 text-amber-800 ring-amber-200", text: "text-amber-700" },
+    low: { label: "Good match", classes: "bg-zinc-100 text-zinc-700 ring-zinc-200", text: "text-zinc-700" },
   }[confidence];
 
   const levelLabel = {
@@ -177,43 +179,41 @@ function GrantCard({ match }: { match: Awaited<ReturnType<typeof matchGrants>>[n
   }[grant.level];
 
   return (
-    <article className="rounded-2xl border border-zinc-200 bg-white p-6 transition hover:border-indigo-300 hover:shadow-md">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <article className="border-b border-zinc-200 py-8">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="rounded-full bg-zinc-100 px-2 py-0.5 font-medium text-zinc-700">
-              {levelLabel}
-            </span>
-            <span className="rounded-full bg-indigo-50 px-2 py-0.5 font-medium text-indigo-700">
-              {grant.programType.replaceAll("_", " ")}
-            </span>
-            <span className={`rounded-full px-2 py-0.5 font-medium ring-1 ${tier.classes}`}>
-              {tier.label}
-            </span>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs uppercase tracking-[0.12em] text-zinc-500">
+            <span>{levelLabel}</span>
+            <span aria-hidden>·</span>
+            <span>{grant.programType.replaceAll("_", " ")}</span>
+            <span aria-hidden>·</span>
+            <span className={tier.text}>{tier.label}</span>
           </div>
-          <h3 className="mt-3 text-xl font-semibold text-zinc-900">
-            <Link href={`/grant/${grant.id}`} className="hover:text-indigo-700">
+          <h3 className="mt-4 text-2xl font-semibold leading-[1.1] tracking-[-0.02em] text-zinc-950 sm:text-3xl">
+            <Link href={`/grant/${grant.id}`} className="hover:underline underline-offset-4">
               {grant.name}
             </Link>
           </h3>
           <p className="mt-1 text-sm text-zinc-500">{grant.sponsor}</p>
-          <p className="mt-3 text-zinc-700">{grant.summary}</p>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-zinc-700">
+            {grant.summary}
+          </p>
           {grant.amountDescription && (
-            <p className="mt-3 text-sm font-medium text-emerald-700">
-              💰 {grant.amountDescription}
+            <p className="mt-4 text-base font-medium text-zinc-950">
+              {grant.amountDescription}
             </p>
           )}
         </div>
-        <div className="flex flex-col gap-2 sm:w-44 sm:flex-none">
+        <div className="flex flex-col gap-2 sm:w-48 sm:flex-none">
           <Link
             href={`/apply/${grant.id}`}
-            className="rounded-full bg-zinc-900 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-zinc-800 active:bg-zinc-700"
+            className="inline-flex items-center justify-center rounded-full bg-zinc-950 px-6 py-3 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-zinc-800"
           >
-            Apply →
+            Apply
           </Link>
           <Link
             href={`/grant/${grant.id}`}
-            className="rounded-full bg-white px-4 py-2.5 text-center text-sm font-medium text-zinc-900 ring-1 ring-zinc-200 hover:bg-zinc-50 active:bg-zinc-100"
+            className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-xs font-medium uppercase tracking-[0.12em] text-zinc-950 ring-1 ring-inset ring-zinc-300 transition hover:bg-zinc-50"
           >
             Details
           </Link>
@@ -221,16 +221,16 @@ function GrantCard({ match }: { match: Awaited<ReturnType<typeof matchGrants>>[n
       </div>
 
       {(whyQualify.length > 0 || whyDisqualify.length > 0) && (
-        <div className="mt-5 grid grid-cols-1 gap-4 border-t border-zinc-100 pt-4 sm:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2">
           {whyQualify.length > 0 && (
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-emerald-700">
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
                 Why you qualify
               </p>
-              <ul className="mt-2 space-y-1 text-sm text-zinc-700">
+              <ul className="mt-4 space-y-2 text-sm text-zinc-700">
                 {whyQualify.slice(0, 4).map((r, i) => (
-                  <li key={i} className="flex gap-2">
-                    <span className="text-emerald-600">✓</span>
+                  <li key={i} className="flex gap-3">
+                    <span className="mt-[3px] inline-block h-[5px] w-[5px] flex-none rounded-full bg-emerald-500" />
                     <span>{r}</span>
                   </li>
                 ))}
@@ -239,13 +239,13 @@ function GrantCard({ match }: { match: Awaited<ReturnType<typeof matchGrants>>[n
           )}
           {whyDisqualify.length > 0 && (
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-amber-700">
-                Check these
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+                Things to confirm
               </p>
-              <ul className="mt-2 space-y-1 text-sm text-zinc-700">
+              <ul className="mt-4 space-y-2 text-sm text-zinc-700">
                 {whyDisqualify.slice(0, 4).map((r, i) => (
-                  <li key={i} className="flex gap-2">
-                    <span className="text-amber-600">!</span>
+                  <li key={i} className="flex gap-3">
+                    <span className="mt-[3px] inline-block h-[5px] w-[5px] flex-none rounded-full bg-amber-500" />
                     <span>{r}</span>
                   </li>
                 ))}

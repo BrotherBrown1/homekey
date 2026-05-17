@@ -79,23 +79,23 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-12">
-      <div className="mb-8">
-        <div className="flex items-center justify-between text-xs text-zinc-500">
+    <div className="mx-auto max-w-2xl px-6 py-20 sm:py-28">
+      <div className="mb-10">
+        <div className="flex items-center justify-between text-xs uppercase tracking-[0.18em] text-zinc-500">
           <span>
-            Step {step + 1} of {totalSteps}
+            Step {step + 1} / {totalSteps}
           </span>
           <span>{Math.round(((step + 1) / totalSteps) * 100)}%</span>
         </div>
-        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-zinc-200">
+        <div className="mt-3 h-px w-full bg-zinc-200">
           <div
-            className="h-full bg-gradient-to-r from-indigo-500 to-emerald-500 transition-all"
+            className="h-px bg-zinc-950 transition-all"
             style={{ width: `${((step + 1) / totalSteps) * 100}%` }}
           />
         </div>
       </div>
 
-      <div className="rounded-3xl bg-white p-8 ring-1 ring-zinc-200">
+      <div>
         {step === 0 && (
           <StepShell title="Where are you buying?" subtitle="We'll match you to programs in your state, county, and city.">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -246,8 +246,8 @@ export default function OnboardingPage() {
         )}
 
         {step === 4 && (
-          <StepShell title="Ready to see your matches" subtitle="Review your profile, then we'll match you to grants in seconds.">
-            <dl className="grid grid-cols-1 gap-3 rounded-2xl bg-zinc-50 p-5 text-sm sm:grid-cols-2">
+          <StepShell title="Ready." subtitle="Review your details. We'll match you in seconds.">
+            <dl className="grid grid-cols-1 gap-x-10 sm:grid-cols-2">
               <Item k="Location" v={`${form.city ? form.city + ", " : ""}${form.state}`} />
               <Item k="Household size" v={form.householdSize.toString()} />
               <Item k="Annual income" v={`$${form.annualIncome.toLocaleString()}`} />
@@ -260,12 +260,12 @@ export default function OnboardingPage() {
           </StepShell>
         )}
 
-        <div className="mt-8 flex items-center justify-between">
+        <div className="mt-12 flex items-center justify-between gap-4 border-t border-zinc-200 pt-8">
           <button
             type="button"
             onClick={() => setStep((s) => Math.max(0, s - 1))}
             disabled={step === 0}
-            className="text-sm text-zinc-500 hover:text-zinc-900 disabled:opacity-30"
+            className="text-xs uppercase tracking-[0.12em] text-zinc-500 hover:text-zinc-950 disabled:opacity-30"
           >
             ← Back
           </button>
@@ -273,18 +273,18 @@ export default function OnboardingPage() {
             <button
               type="button"
               onClick={() => setStep((s) => s + 1)}
-              className="rounded-full bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white hover:bg-zinc-800"
+              className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-zinc-950 px-8 py-3 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-zinc-800"
             >
-              Continue →
+              Continue
             </button>
           ) : (
             <button
               type="button"
               onClick={submit}
               disabled={submitting}
-              className="rounded-full bg-gradient-to-r from-indigo-600 to-emerald-600 px-6 py-2.5 text-sm font-medium text-white hover:from-indigo-700 hover:to-emerald-700 disabled:opacity-60"
+              className="inline-flex min-w-[200px] items-center justify-center rounded-full bg-zinc-950 px-8 py-3 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-zinc-800 disabled:opacity-60"
             >
-              {submitting ? "Matching..." : "Show my grants →"}
+              {submitting ? "Matching…" : "Show my grants"}
             </button>
           )}
         </div>
@@ -294,16 +294,17 @@ export default function OnboardingPage() {
         .input {
           display: block;
           width: 100%;
-          border-radius: 0.75rem;
-          background: white;
-          padding: 0.625rem 0.875rem;
-          font-size: 0.95rem;
-          color: #18181b;
-          box-shadow: inset 0 0 0 1px #e4e4e7;
+          border: 0;
+          border-bottom: 1px solid #d4d4d8;
+          background: transparent;
+          padding: 0.5rem 0;
+          font-size: 1.0625rem;
+          color: #09090b;
+          transition: border-color 0.15s ease;
         }
         .input:focus {
-          outline: 2px solid #6366f1;
-          outline-offset: 1px;
+          outline: none;
+          border-bottom-color: #09090b;
         }
       `}</style>
     </div>
@@ -321,9 +322,11 @@ function StepShell({
 }) {
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-zinc-900">{title}</h2>
-      <p className="mt-2 text-sm text-zinc-500">{subtitle}</p>
-      <div className="mt-6">{children}</div>
+      <h2 className="text-4xl font-semibold leading-[1.05] tracking-[-0.025em] text-zinc-950 sm:text-5xl">
+        {title}
+      </h2>
+      <p className="mt-4 text-base text-zinc-600 sm:text-lg">{subtitle}</p>
+      <div className="mt-10">{children}</div>
     </div>
   );
 }
@@ -331,7 +334,9 @@ function StepShell({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-sm font-medium text-zinc-700">{label}</span>
+      <span className="mb-2 block text-xs font-medium uppercase tracking-[0.12em] text-zinc-500">
+        {label}
+      </span>
       {children}
     </label>
   );
@@ -350,28 +355,28 @@ function Choice({
 }) {
   return (
     <label
-      className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-sm ${
+      className={`flex cursor-pointer items-center gap-3 border-b px-1 py-4 text-base transition ${
         checked
-          ? "border-indigo-300 bg-indigo-50 text-indigo-900"
-          : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300"
+          ? "border-zinc-950 text-zinc-950"
+          : "border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:text-zinc-950"
       }`}
     >
       <input
         type={type}
         checked={checked}
         onChange={onChange}
-        className="h-4 w-4 accent-indigo-600"
+        className="h-4 w-4 accent-zinc-950"
       />
-      {label}
+      <span className="flex-1">{label}</span>
     </label>
   );
 }
 
 function Item({ k, v }: { k: string; v: string }) {
   return (
-    <div>
-      <dt className="text-xs uppercase tracking-wide text-zinc-500">{k}</dt>
-      <dd className="mt-0.5 font-medium text-zinc-900">{v}</dd>
+    <div className="border-b border-zinc-200 py-3">
+      <dt className="text-xs uppercase tracking-[0.12em] text-zinc-500">{k}</dt>
+      <dd className="mt-1 text-base font-medium text-zinc-950">{v}</dd>
     </div>
   );
 }

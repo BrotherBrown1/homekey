@@ -2,230 +2,269 @@ import Link from "next/link";
 import { BRAND } from "@/lib/config";
 
 export default function HomePage() {
-  const totalGrants = 82;
-  const statesCovered = 51;
-
   return (
-    <div>
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-emerald-50">
-        <div className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 lg:items-center">
-            <div className="lg:col-span-3">
-              <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-medium text-indigo-700 ring-1 ring-indigo-100">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-                Powered by IBM watsonx · {totalGrants} programs · all 50 states
-              </p>
-              <h1 className="text-5xl font-semibold leading-tight tracking-tight text-zinc-900 sm:text-6xl">
-                Find the grants that <span className="bg-gradient-to-br from-indigo-600 to-emerald-600 bg-clip-text text-transparent">unlock your first home</span>.
-              </h1>
-              <p className="mt-6 max-w-2xl text-lg text-zinc-600">
-                We match first-time buyers, veterans, teachers, nurses, and first responders
-                with federal, state, county, and city programs — updated weekly by an AI agent
-                that watches every housing authority for changes.
-              </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  href="/onboarding"
-                  className="inline-flex items-center justify-center rounded-full bg-zinc-900 px-6 py-3 text-base font-medium text-white shadow-sm transition hover:bg-zinc-800"
-                >
-                  Find my grants →
-                </Link>
-                <a
-                  href="#how"
-                  className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-base font-medium text-zinc-900 ring-1 ring-zinc-200 transition hover:bg-zinc-50"
-                >
-                  How it works
-                </a>
-              </div>
-              <p className="mt-4 text-sm text-zinc-500">
-                Free · No credit pull · 3 minutes
-              </p>
-            </div>
-            <div className="lg:col-span-2">
-              <div className="relative rounded-3xl bg-white p-6 shadow-xl ring-1 ring-zinc-200">
-                <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">
-                  Today's match preview
-                </p>
-                <div className="mt-3 space-y-3">
-                  <MockGrant
-                    name="MSHDA $10K Down Payment Assistance"
-                    sponsor="Michigan State Housing Development Authority"
-                    amount="Up to $10,000 grant"
-                    score={92}
-                  />
-                  <MockGrant
-                    name="Good Neighbor Next Door"
-                    sponsor="U.S. Department of HUD"
-                    amount="50% off list price"
-                    score={88}
-                  />
-                  <MockGrant
-                    name="FHLB Affordable Housing Program"
-                    sponsor="Federal Home Loan Banks"
-                    amount="Up to $25,000 grant"
-                    score={81}
-                  />
-                </div>
-              </div>
-            </div>
+    <div className="-mt-px">
+      <FullBleed
+        bg="bg-white"
+        text="text-zinc-950"
+        align="end"
+        bgVisual={
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-gradient-to-b from-white via-white to-zinc-50" />
+            <div className="absolute -right-32 top-1/4 h-[40rem] w-[40rem] rounded-full bg-emerald-200/40 blur-3xl" />
+            <div className="absolute -left-40 bottom-0 h-[36rem] w-[36rem] rounded-full bg-indigo-200/40 blur-3xl" />
           </div>
-        </div>
-      </section>
+        }
+      >
+        <Eyebrow>{BRAND.name}</Eyebrow>
+        <Headline>
+          Find the grants that unlock
+          <br className="hidden sm:block" /> your first home.
+        </Headline>
+        <Subline>
+          Every federal, state, county, and city program you qualify for.
+          Free. Three minutes.
+        </Subline>
+        <CtaPair
+          primary={{ href: "/onboarding", label: "Find my grants" }}
+          secondary={{ href: "#how", label: "Learn how" }}
+        />
+      </FullBleed>
 
-      {/* Stats */}
-      <section className="border-y border-zinc-200 bg-white py-12">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-6 sm:grid-cols-4">
-          <Stat label="Programs in database" value={totalGrants.toString()} />
-          <Stat label="States covered" value={`${statesCovered}+`} />
-          <Stat label="Updated" value="Weekly" />
-          <Stat label="Cost to buyer" value="Free" />
-        </div>
-      </section>
+      <FullBleed bg="bg-zinc-950" text="text-white" align="end">
+        <Eyebrow tone="dark">The opportunity</Eyebrow>
+        <Headline>
+          $18,400.
+          <br />
+          On average, in your name.
+        </Headline>
+        <Subline tone="dark">
+          That's what the average first-time buyer qualifies for in stackable
+          down-payment and closing-cost grants and never claims. Because no one
+          told them. {BRAND.name} does.
+        </Subline>
+        <CtaPair
+          tone="dark"
+          primary={{ href: "/onboarding", label: "See yours" }}
+          secondary={{ href: "#how", label: "How we know" }}
+        />
+      </FullBleed>
 
-      {/* How it works */}
-      <section id="how" className="bg-zinc-50 py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <h2 className="text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
-            How {BRAND.name} works
-          </h2>
-          <p className="mt-3 max-w-2xl text-lg text-zinc-600">
-            Three minutes to see every grant you qualify for.
-          </p>
-          <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
-            <Step
-              n="1"
-              title="Tell us about you"
-              body="Where you want to buy, household income, household size, profession, first-time buyer status. We only ask what we need to match you to the right programs."
-            />
-            <Step
-              n="2"
-              title="See your matches instantly"
-              body="We compare your profile against every active federal, state, county, and city grant — and show you the ones you qualify for, with the dollar amount and why each one fits."
-            />
-            <Step
-              n="3"
-              title="Start your application"
-              body={`One click to begin. A free ${BRAND.name} grant specialist walks you through eligibility and the official application — no credit pull, no fees.`}
-            />
-          </div>
+      <FullBleed id="how" bg="bg-white" text="text-zinc-950" align="end">
+        <Eyebrow>How it works</Eyebrow>
+        <Headline>
+          Three minutes.
+          <br />
+          Every grant you qualify for.
+        </Headline>
+        <div className="mt-12 grid w-full max-w-5xl grid-cols-1 gap-px overflow-hidden rounded-3xl bg-zinc-200 sm:grid-cols-3">
+          <Step
+            n="01"
+            title="Tell us about you"
+            body="Where you want to buy, household income, profession. We only ask what we need."
+          />
+          <Step
+            n="02"
+            title="Match instantly"
+            body="Your profile runs against every active grant. You see the ones you qualify for, with dollar amounts and reasoning."
+          />
+          <Step
+            n="03"
+            title="Apply with help"
+            body={`One click. A free ${BRAND.name} grant specialist walks you through eligibility and the application.`}
+          />
         </div>
-      </section>
+        <div className="mt-12">
+          <CtaPair
+            primary={{ href: "/onboarding", label: "Find my grants" }}
+            secondary={{ href: "#freshness", label: "How current is the data?" }}
+          />
+        </div>
+      </FullBleed>
 
-      {/* Why this exists */}
-      <section className="bg-white py-20">
-        <div className="mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-2 lg:items-center">
-          <div>
-            <p className="text-sm font-medium text-indigo-600">Why this exists</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
-              Billions in grant money goes unclaimed every year.
-            </h2>
-            <p className="mt-4 text-lg text-zinc-600">
-              Government grants for first-time home buyers change quarterly.
-              Funding windows open and close. Eligibility rules shift. Most
-              buyers never hear about programs they qualify for — and miss
-              out on tens of thousands of dollars they'll never get back.
-            </p>
-            <p className="mt-4 text-lg text-zinc-600">
-              {BRAND.name} solves that. We watch every housing authority in the
-              country, update our database within a week of any change, and
-              show you which programs are actually live and fundable for
-              your situation today.
-            </p>
-          </div>
-          <div className="rounded-3xl bg-gradient-to-br from-indigo-50 to-emerald-50 p-8 ring-1 ring-zinc-200">
-            <p className="text-sm font-medium text-zinc-500">
-              The average first-time buyer qualifies for
-            </p>
-            <p className="mt-3 text-6xl font-semibold tracking-tight text-zinc-900">
-              $18,400
-            </p>
-            <p className="mt-2 text-zinc-600">
-              in stackable grants they didn&apos;t know existed
-            </p>
-            <div className="mt-6 grid grid-cols-3 gap-3 text-center">
-              <div className="rounded-xl bg-white p-3 ring-1 ring-zinc-200">
-                <p className="text-xs uppercase tracking-wide text-zinc-500">Federal</p>
-                <p className="mt-1 text-2xl font-semibold text-zinc-900">12</p>
-              </div>
-              <div className="rounded-xl bg-white p-3 ring-1 ring-zinc-200">
-                <p className="text-xs uppercase tracking-wide text-zinc-500">State</p>
-                <p className="mt-1 text-2xl font-semibold text-zinc-900">51</p>
-              </div>
-              <div className="rounded-xl bg-white p-3 ring-1 ring-zinc-200">
-                <p className="text-xs uppercase tracking-wide text-zinc-500">Local</p>
-                <p className="mt-1 text-2xl font-semibold text-zinc-900">19+</p>
-              </div>
-            </div>
-          </div>
+      <FullBleed id="freshness" bg="bg-zinc-950" text="text-white" align="end">
+        <Eyebrow tone="dark">Always current</Eyebrow>
+        <Headline>
+          Grants change quarterly.
+          <br />
+          {BRAND.name} watches every one.
+        </Headline>
+        <Subline tone="dark">
+          Funding windows open and close. Eligibility rules shift. Programs
+          launch, pause, and disappear. {BRAND.name} updates within a week of
+          any change — so what you see is what you can actually claim.
+        </Subline>
+        <FreshnessStats />
+        <div className="mt-12">
+          <CtaPair
+            tone="dark"
+            primary={{ href: "/onboarding", label: "Get started" }}
+            secondary={{ href: "#community", label: "About this project" }}
+          />
         </div>
-      </section>
+      </FullBleed>
 
-      {/* CTA */}
-      <section className="bg-gradient-to-br from-indigo-600 to-emerald-600 py-20">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-            Ready to find your grants?
-          </h2>
-          <p className="mt-4 text-lg text-indigo-50">
-            3 minutes. No login. We'll show every program you might qualify for.
-          </p>
-          <Link
-            href="/onboarding"
-            className="mt-8 inline-flex items-center justify-center rounded-full bg-white px-8 py-3 text-base font-medium text-zinc-900 shadow-md transition hover:bg-zinc-100"
-          >
-            Get my matches →
-          </Link>
-        </div>
-      </section>
+      <FullBleed id="community" bg="bg-white" text="text-zinc-950" align="end">
+        <Eyebrow>A community resource</Eyebrow>
+        <Headline>
+          Free for buyers.
+          <br />
+          Always.
+        </Headline>
+        <Subline>
+          {BRAND.name} doesn&apos;t charge buyers. No fees, no credit pull, no
+          data sold. It exists so the money governments set aside for
+          first-time home buyers actually reaches them.
+        </Subline>
+        <CtaPair
+          primary={{ href: "/onboarding", label: "Find my grants" }}
+          secondary={{ href: `mailto:${BRAND.realtor.email}`, label: "Contact" }}
+        />
+      </FullBleed>
     </div>
   );
 }
 
-function MockGrant({
-  name,
-  sponsor,
-  amount,
-  score,
+function FullBleed({
+  id,
+  bg,
+  text,
+  align = "center",
+  bgVisual,
+  children,
 }: {
-  name: string;
-  sponsor: string;
-  amount: string;
-  score: number;
+  id?: string;
+  bg: string;
+  text: string;
+  align?: "center" | "end";
+  bgVisual?: React.ReactNode;
+  children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-zinc-100 bg-white p-4 text-sm">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="truncate font-medium text-zinc-900">{name}</p>
-          <p className="truncate text-xs text-zinc-500">{sponsor}</p>
-        </div>
-        <span className="flex-none rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
-          {score}% match
-        </span>
+    <section
+      id={id}
+      className={`relative flex min-h-[88vh] w-full overflow-hidden ${bg} ${text}`}
+    >
+      {bgVisual}
+      <div
+        className={`relative z-10 mx-auto flex w-full max-w-5xl flex-col px-6 ${
+          align === "end" ? "justify-end pb-20 pt-32" : "justify-center py-24"
+        } sm:px-10`}
+      >
+        {children}
       </div>
-      <p className="mt-2 text-zinc-700">{amount}</p>
-    </div>
+    </section>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Eyebrow({
+  children,
+  tone = "light",
+}: {
+  children: React.ReactNode;
+  tone?: "light" | "dark";
+}) {
   return (
-    <div>
-      <p className="text-3xl font-semibold text-zinc-900">{value}</p>
-      <p className="mt-1 text-sm text-zinc-500">{label}</p>
+    <p
+      className={`text-xs font-medium uppercase tracking-[0.18em] ${
+        tone === "dark" ? "text-zinc-400" : "text-zinc-500"
+      }`}
+    >
+      {children}
+    </p>
+  );
+}
+
+function Headline({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="mt-4 text-5xl font-semibold leading-[1.03] tracking-[-0.025em] sm:text-7xl lg:text-[88px]">
+      {children}
+    </h2>
+  );
+}
+
+function Subline({
+  children,
+  tone = "light",
+}: {
+  children: React.ReactNode;
+  tone?: "light" | "dark";
+}) {
+  return (
+    <p
+      className={`mt-6 max-w-2xl text-lg leading-relaxed sm:text-xl ${
+        tone === "dark" ? "text-zinc-300" : "text-zinc-600"
+      }`}
+    >
+      {children}
+    </p>
+  );
+}
+
+function CtaPair({
+  primary,
+  secondary,
+  tone = "light",
+}: {
+  primary: { href: string; label: string };
+  secondary: { href: string; label: string };
+  tone?: "light" | "dark";
+}) {
+  const primaryCls =
+    tone === "dark"
+      ? "bg-white text-zinc-950 hover:bg-zinc-100"
+      : "bg-zinc-950 text-white hover:bg-zinc-800";
+  const secondaryCls =
+    tone === "dark"
+      ? "bg-white/10 text-white ring-1 ring-inset ring-white/20 backdrop-blur hover:bg-white/15"
+      : "bg-white text-zinc-950 ring-1 ring-inset ring-zinc-200 hover:bg-zinc-50";
+  return (
+    <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+      <Link
+        href={primary.href}
+        className={`inline-flex min-w-[200px] items-center justify-center rounded-full px-8 py-3.5 text-sm font-medium uppercase tracking-[0.08em] transition ${primaryCls}`}
+      >
+        {primary.label}
+      </Link>
+      <Link
+        href={secondary.href}
+        className={`inline-flex min-w-[200px] items-center justify-center rounded-full px-8 py-3.5 text-sm font-medium uppercase tracking-[0.08em] transition ${secondaryCls}`}
+      >
+        {secondary.label}
+      </Link>
     </div>
   );
 }
 
 function Step({ n, title, body }: { n: string; title: string; body: string }) {
   return (
-    <div className="rounded-2xl bg-white p-6 ring-1 ring-zinc-200">
-      <div className="grid h-10 w-10 place-items-center rounded-full bg-zinc-900 text-sm font-semibold text-white">
+    <div className="bg-white p-8">
+      <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
         {n}
-      </div>
-      <h3 className="mt-4 text-lg font-semibold text-zinc-900">{title}</h3>
-      <p className="mt-2 text-sm text-zinc-600">{body}</p>
+      </p>
+      <h3 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-950">
+        {title}
+      </h3>
+      <p className="mt-3 text-base leading-relaxed text-zinc-600">{body}</p>
+    </div>
+  );
+}
+
+function FreshnessStats() {
+  const items: Array<[string, string]> = [
+    ["12", "Federal programs"],
+    ["51+", "States covered"],
+    ["19+", "City & county programs"],
+    ["7 days", "Max data age"],
+  ];
+  return (
+    <div className="mt-12 grid w-full max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-3xl bg-white/10 sm:grid-cols-4">
+      {items.map(([v, l]) => (
+        <div key={l} className="bg-zinc-950 p-6">
+          <p className="text-3xl font-semibold tracking-tight sm:text-4xl">{v}</p>
+          <p className="mt-2 text-sm text-zinc-400">{l}</p>
+        </div>
+      ))}
     </div>
   );
 }

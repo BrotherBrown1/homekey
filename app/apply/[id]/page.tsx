@@ -50,93 +50,107 @@ export default async function ApplyPage({
     : "Amount varies by income and area";
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
-      <BackLink fallbackHref="/">← Back to my matches</BackLink>
+    <div>
+      <section className="border-b border-zinc-200 bg-white">
+        <div className="mx-auto max-w-4xl px-6 pb-16 pt-12 sm:pb-20 sm:pt-16">
+          <BackLink fallbackHref="/">← Back to my matches</BackLink>
+          <p className="mt-10 text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+            Applying for
+          </p>
+          <h1 className="mt-4 text-5xl font-semibold leading-[1.03] tracking-[-0.025em] text-zinc-950 sm:text-7xl">
+            {grant.name}
+          </h1>
+          <p className="mt-4 text-lg text-zinc-600 sm:text-xl">{grant.sponsor}</p>
 
-      <div className="mt-4 rounded-3xl bg-gradient-to-br from-indigo-50 via-white to-emerald-50 p-8 ring-1 ring-zinc-200">
-        <p className="text-xs font-medium uppercase tracking-wide text-indigo-600">
-          Applying for
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
-          {grant.name}
-        </h1>
-        <p className="mt-2 text-zinc-600">{grant.sponsor}</p>
-
-        <dl className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl bg-white p-4 ring-1 ring-zinc-200">
-            <dt className="text-xs uppercase tracking-wide text-zinc-500">Amount</dt>
-            <dd className="mt-1 text-lg font-semibold text-zinc-900">{dollar}</dd>
-          </div>
-          <div className="rounded-2xl bg-white p-4 ring-1 ring-zinc-200">
-            <dt className="text-xs uppercase tracking-wide text-zinc-500">Type</dt>
-            <dd className="mt-1 text-sm font-medium text-zinc-900">
-              {programTypeLabel(grant.programType)}
-            </dd>
-          </div>
-          <div className="rounded-2xl bg-white p-4 ring-1 ring-zinc-200">
-            <dt className="text-xs uppercase tracking-wide text-zinc-500">Covers</dt>
-            <dd className="mt-1 text-sm font-medium text-zinc-900">
-              {grant.level === "federal"
-                ? "All 50 states"
-                : `${grant.city ? grant.city + ", " : ""}${grant.state ?? ""}`}
-            </dd>
-          </div>
-        </dl>
-      </div>
-
-      <section className="mt-8 rounded-3xl bg-white p-6 ring-1 ring-zinc-200">
-        <h2 className="text-lg font-semibold text-zinc-900">
-          About this grant
-        </h2>
-        <p className="mt-2 text-zinc-700">{grant.summary}</p>
-
-        <h3 className="mt-6 text-sm font-semibold text-zinc-900">
-          Why most people miss this money
-        </h3>
-        <p className="mt-2 text-sm text-zinc-600">
-          Grant programs change quarterly. Funding windows open and close,
-          eligibility rules shift, and most buyers never hear about them.
-          That's the problem {BRAND.name} solves — we track every active
-          federal, state, county, and city program and tell you which ones
-          you qualify for.
-        </p>
-        <p className="mt-3 text-sm text-zinc-600">
-          A {BRAND.name} grant specialist will help you actually claim this
-          one. They'll confirm your eligibility, gather what you need to
-          submit, and walk you through the official application form
-          step-by-step. Free.
-        </p>
-      </section>
-
-      <section
-        id="apply"
-        className="mt-8 rounded-3xl bg-zinc-900 p-6 text-white ring-1 ring-zinc-800"
-      >
-        <h2 className="text-xl font-semibold">
-          Apply for this grant
-        </h2>
-        <p className="mt-2 text-sm text-zinc-300">
-          Tell us how to reach you. A {BRAND.name} grant specialist will
-          contact you within 24 hours to start your application for{" "}
-          {grant.name}. Free. No credit pull. No obligation.
-        </p>
-        <div className="mt-6">
-          <ApplyLeadForm grantId={grant.id} grantName={grant.name} />
+          <dl className="mt-12 grid grid-cols-1 gap-y-8 border-t border-zinc-200 pt-8 sm:grid-cols-3 sm:gap-x-12">
+            <div>
+              <dt className="text-xs uppercase tracking-[0.18em] text-zinc-500">
+                Amount
+              </dt>
+              <dd className="mt-2 text-2xl font-semibold tracking-[-0.02em] text-zinc-950">
+                {dollar}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs uppercase tracking-[0.18em] text-zinc-500">
+                Type
+              </dt>
+              <dd className="mt-2 text-base font-medium text-zinc-950">
+                {programTypeLabel(grant.programType)}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs uppercase tracking-[0.18em] text-zinc-500">
+                Covers
+              </dt>
+              <dd className="mt-2 text-base font-medium text-zinc-950">
+                {grant.level === "federal"
+                  ? "All 50 states"
+                  : `${grant.city ? grant.city + ", " : ""}${grant.state ?? ""}`}
+              </dd>
+            </div>
+          </dl>
         </div>
       </section>
 
-      <section className="mt-8 text-center text-sm text-zinc-500">
-        <p>
-          Want to see the official program page first?{" "}
-          <a
-            href={`/apply/${grant.id}/direct`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-indigo-600 hover:text-indigo-700"
-          >
-            Open it on the sponsor's site →
-          </a>
-        </p>
+      <section className="border-b border-zinc-200 bg-white">
+        <div className="mx-auto max-w-4xl px-6 py-20">
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+            About this grant
+          </p>
+          <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.025em] text-zinc-950 sm:text-4xl">
+            What it is, and why most people miss it.
+          </h2>
+          <p className="mt-6 max-w-3xl text-lg leading-relaxed text-zinc-700">
+            {grant.summary}
+          </p>
+          <p className="mt-6 max-w-3xl text-base leading-relaxed text-zinc-600">
+            Grant programs change quarterly. Funding windows open and close.
+            Eligibility shifts. Most buyers never hear they exist — that's
+            the problem {BRAND.name} solves. We track every active federal,
+            state, county, and city program so you can claim what's yours.
+          </p>
+          <p className="mt-4 max-w-3xl text-base leading-relaxed text-zinc-600">
+            A {BRAND.name} grant specialist helps you actually file this one.
+            They confirm your eligibility, gather what you need, and walk
+            you through the official application step-by-step. Free.
+          </p>
+        </div>
+      </section>
+
+      <section id="apply" className="bg-zinc-950 text-white">
+        <div className="mx-auto max-w-4xl px-6 py-20 sm:py-24">
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
+            Start your application
+          </p>
+          <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.025em] sm:text-5xl">
+            Apply for this grant.
+          </h2>
+          <p className="mt-6 max-w-2xl text-lg text-zinc-300">
+            Tell us how to reach you. A {BRAND.name} grant specialist will
+            contact you within 24 hours to begin your application for{" "}
+            {grant.name}. Free. No credit pull. No obligation.
+          </p>
+          <div className="mt-10">
+            <ApplyLeadForm grantId={grant.id} grantName={grant.name} />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white">
+        <div className="mx-auto max-w-4xl px-6 py-12 text-center text-sm text-zinc-500">
+          <p>
+            Want to see the official program page first?{" "}
+            <a
+              href={`/apply/${grant.id}/direct`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-zinc-950 underline underline-offset-4"
+            >
+              Open it on the sponsor&apos;s site →
+            </a>
+          </p>
+        </div>
       </section>
     </div>
   );

@@ -40,95 +40,126 @@ export default async function GrantDetailPage({ params }: { params: Params }) {
     ["Limited to targeted areas", e.targetAreasOnly ? "Yes" : undefined],
   ];
 
+  const locationLabel =
+    grant.level === "federal"
+      ? "Federal"
+      : grant.level === "state"
+      ? grant.state
+      : grant.level === "county"
+      ? `${grant.county} County, ${grant.state}`
+      : `${grant.city}, ${grant.state}`;
+
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12">
-      <Link href="/results" className="text-sm text-zinc-500 hover:text-zinc-900">
-        ← Back to results
-      </Link>
-
-      <header className="mt-4 rounded-3xl bg-gradient-to-br from-indigo-50 to-emerald-50 p-8 ring-1 ring-zinc-200">
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="rounded-full bg-white px-2 py-0.5 font-medium text-zinc-700 ring-1 ring-zinc-200">
-            {grant.level === "federal"
-              ? "Federal"
-              : grant.level === "state"
-              ? grant.state
-              : grant.level === "county"
-              ? `${grant.county} County, ${grant.state}`
-              : `${grant.city}, ${grant.state}`}
-          </span>
-          <span className="rounded-full bg-indigo-50 px-2 py-0.5 font-medium text-indigo-700 ring-1 ring-indigo-200">
-            {grant.programType.replaceAll("_", " ")}
-          </span>
-          <span
-            className={`rounded-full px-2 py-0.5 font-medium ring-1 ${
-              grant.status === "active"
-                ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
-                : "bg-zinc-100 text-zinc-700 ring-zinc-200"
-            }`}
+    <div>
+      <section className="border-b border-zinc-200 bg-white">
+        <div className="mx-auto max-w-4xl px-6 pb-16 pt-12 sm:pb-20 sm:pt-16">
+          <Link
+            href="/results"
+            className="text-xs uppercase tracking-[0.12em] text-zinc-500 hover:text-zinc-950"
           >
-            {grant.status}
-          </span>
+            ← Back to results
+          </Link>
+          <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs uppercase tracking-[0.12em] text-zinc-500">
+            <span>{locationLabel}</span>
+            <span aria-hidden>·</span>
+            <span>{grant.programType.replaceAll("_", " ")}</span>
+            <span aria-hidden>·</span>
+            <span
+              className={grant.status === "active" ? "text-emerald-700" : "text-zinc-500"}
+            >
+              {grant.status}
+            </span>
+          </div>
+          <h1 className="mt-4 text-5xl font-semibold leading-[1.03] tracking-[-0.025em] text-zinc-950 sm:text-7xl">
+            {grant.name}
+          </h1>
+          <p className="mt-4 text-lg text-zinc-600 sm:text-xl">{grant.sponsor}</p>
+          {grant.amountDescription && (
+            <p className="mt-8 text-2xl font-semibold tracking-[-0.02em] text-zinc-950 sm:text-3xl">
+              {grant.amountDescription}
+            </p>
+          )}
         </div>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-900">
-          {grant.name}
-        </h1>
-        <p className="mt-1 text-zinc-600">{grant.sponsor}</p>
-        {grant.amountDescription && (
-          <p className="mt-4 text-lg font-medium text-emerald-700">💰 {grant.amountDescription}</p>
-        )}
-      </header>
-
-      <section className="mt-8">
-        <h2 className="text-lg font-semibold text-zinc-900">Overview</h2>
-        <p className="mt-2 text-zinc-700">{grant.summary}</p>
       </section>
 
-      <section className="mt-8">
-        <h2 className="text-lg font-semibold text-zinc-900">Detailed requirements</h2>
-        <p className="mt-2 whitespace-pre-line text-zinc-700">{grant.detailedRequirements}</p>
-      </section>
-
-      <section className="mt-8">
-        <h2 className="text-lg font-semibold text-zinc-900">Eligibility at a glance</h2>
-        <dl className="mt-3 grid grid-cols-1 gap-3 rounded-2xl border border-zinc-200 bg-white p-5 sm:grid-cols-2">
-          {eligibilityRows
-            .filter(([, v]) => v)
-            .map(([k, v]) => (
-              <div key={k}>
-                <dt className="text-xs uppercase tracking-wide text-zinc-500">{k}</dt>
-                <dd className="mt-0.5 text-sm font-medium text-zinc-900">{v}</dd>
-              </div>
-            ))}
-        </dl>
-        {e.notes && (
-          <p className="mt-3 rounded-xl bg-amber-50 p-4 text-sm text-amber-900 ring-1 ring-amber-200">
-            <strong>Note:</strong> {e.notes}
+      <section className="border-b border-zinc-200 bg-white">
+        <div className="mx-auto max-w-4xl px-6 py-16">
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+            Overview
           </p>
-        )}
+          <p className="mt-4 max-w-3xl text-lg leading-relaxed text-zinc-700">
+            {grant.summary}
+          </p>
+        </div>
       </section>
 
-      <section className="mt-8 flex flex-wrap items-center gap-3">
-        <a
-          href={`/apply/${grant.id}`}
-          className="rounded-full bg-zinc-900 px-6 py-3 font-medium text-white hover:bg-zinc-800"
-        >
-          Apply with help →
-        </a>
-        <a
-          href={grant.sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-zinc-500 hover:text-zinc-900"
-        >
-          Program homepage
-        </a>
+      <section className="border-b border-zinc-200 bg-white">
+        <div className="mx-auto max-w-4xl px-6 py-16">
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+            Detailed requirements
+          </p>
+          <p className="mt-4 max-w-3xl whitespace-pre-line text-base leading-relaxed text-zinc-700">
+            {grant.detailedRequirements}
+          </p>
+        </div>
       </section>
 
-      <p className="mt-8 text-xs text-zinc-400">
-        Last verified: {grant.lastVerified}. We update programs weekly using a watsonx Orchestrate agent.
-        Always confirm details on the official program page before applying.
-      </p>
+      <section className="border-b border-zinc-200 bg-white">
+        <div className="mx-auto max-w-4xl px-6 py-16">
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+            Eligibility at a glance
+          </p>
+          <dl className="mt-8 grid grid-cols-1 gap-x-12 sm:grid-cols-2">
+            {eligibilityRows
+              .filter(([, v]) => v)
+              .map(([k, v]) => (
+                <div key={k} className="border-b border-zinc-200 py-4">
+                  <dt className="text-xs uppercase tracking-[0.12em] text-zinc-500">
+                    {k}
+                  </dt>
+                  <dd className="mt-2 text-base font-medium text-zinc-950">{v}</dd>
+                </div>
+              ))}
+          </dl>
+          {e.notes && (
+            <p className="mt-8 max-w-3xl border-l-2 border-amber-400 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+              <strong>Note:</strong> {e.notes}
+            </p>
+          )}
+        </div>
+      </section>
+
+      <section className="bg-zinc-950 text-white">
+        <div className="mx-auto max-w-4xl px-6 py-20 sm:py-24">
+          <h2 className="text-3xl font-semibold leading-tight tracking-[-0.025em] sm:text-5xl">
+            Ready to apply?
+          </h2>
+          <p className="mt-4 max-w-2xl text-lg text-zinc-300">
+            A free grant specialist walks you through eligibility and the
+            official application in one short call.
+          </p>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <a
+              href={`/apply/${grant.id}`}
+              className="inline-flex min-w-[220px] items-center justify-center rounded-full bg-white px-8 py-3.5 text-xs font-medium uppercase tracking-[0.12em] text-zinc-950 transition hover:bg-zinc-100"
+            >
+              Apply with help
+            </a>
+            <a
+              href={grant.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-w-[220px] items-center justify-center rounded-full bg-white/10 px-8 py-3.5 text-xs font-medium uppercase tracking-[0.12em] text-white ring-1 ring-inset ring-white/20 transition hover:bg-white/15"
+            >
+              Program homepage
+            </a>
+          </div>
+          <p className="mt-10 text-xs text-zinc-500">
+            Last verified {grant.lastVerified}. Updated weekly. Always confirm
+            details on the official program page before applying.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

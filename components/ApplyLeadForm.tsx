@@ -54,12 +54,16 @@ export function ApplyLeadForm({
 
   if (status === "ok") {
     return (
-      <div className="rounded-2xl bg-emerald-50 p-5 text-emerald-900 ring-1 ring-emerald-200">
-        <p className="font-medium">✓ You're in. We'll start your {grantName} application.</p>
-        <p className="mt-2 text-sm text-emerald-800">
-          A grant specialist will reach out within 24 hours at <strong>{email}</strong> or <strong>{phone}</strong>.
-          They'll confirm your eligibility, gather what you need, and submit the official
-          application with you. Free. No credit pull. No obligation.
+      <div className="border-y border-emerald-400/40 bg-emerald-500/10 px-6 py-6 text-emerald-100">
+        <p className="text-lg font-medium tracking-[-0.01em] text-white">
+          ✓ You&apos;re in. We&apos;ll start your {grantName} application.
+        </p>
+        <p className="mt-3 max-w-xl text-sm text-emerald-100/90">
+          A grant specialist will reach out within 24 hours at{" "}
+          <strong className="text-white">{email}</strong> or{" "}
+          <strong className="text-white">{phone}</strong>. They&apos;ll confirm eligibility,
+          gather what you need, and submit the official application with you. Free. No
+          credit pull. No obligation.
         </p>
       </div>
     );
@@ -75,7 +79,7 @@ export function ApplyLeadForm({
           placeholder="First name"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          className="rounded-lg bg-zinc-800 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:outline focus:outline-2 focus:outline-indigo-400"
+          className="border-0 border-b border-white/20 bg-transparent px-1 py-2.5 text-base text-white placeholder:text-zinc-500 focus:border-white focus:outline-none"
         />
         <input
           required
@@ -84,7 +88,7 @@ export function ApplyLeadForm({
           placeholder="Last name"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          className="rounded-lg bg-zinc-800 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:outline focus:outline-2 focus:outline-indigo-400"
+          className="border-0 border-b border-white/20 bg-transparent px-1 py-2.5 text-base text-white placeholder:text-zinc-500 focus:border-white focus:outline-none"
         />
         <input
           required
@@ -93,7 +97,7 @@ export function ApplyLeadForm({
           placeholder="Email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded-lg bg-zinc-800 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:outline focus:outline-2 focus:outline-indigo-400"
+          className="border-0 border-b border-white/20 bg-transparent px-1 py-2.5 text-base text-white placeholder:text-zinc-500 focus:border-white focus:outline-none"
         />
         <input
           required
@@ -102,7 +106,7 @@ export function ApplyLeadForm({
           placeholder="Phone number"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className="rounded-lg bg-zinc-800 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:outline focus:outline-2 focus:outline-indigo-400"
+          className="border-0 border-b border-white/20 bg-transparent px-1 py-2.5 text-base text-white placeholder:text-zinc-500 focus:border-white focus:outline-none"
         />
         <input
           type="text"
@@ -116,15 +120,13 @@ export function ApplyLeadForm({
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="w-full rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:from-indigo-600 hover:to-emerald-600 disabled:opacity-60"
+        className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-xs font-medium uppercase tracking-[0.14em] text-zinc-950 transition hover:bg-zinc-100 disabled:opacity-60 sm:w-auto sm:min-w-[280px]"
       >
-        {status === "submitting" ? "Sending..." : "Start my grant application →"}
+        {status === "submitting" ? "Sending…" : "Start my grant application →"}
       </button>
-      {status === "error" && (
-        <p className="text-sm text-red-400">{message}</p>
-      )}
-      <p className="text-xs text-zinc-400">
-        We never sell your data. You can opt out anytime by replying STOP to any message.
+      {status === "error" && <p className="text-sm text-red-400">{message}</p>}
+      <p className="text-xs text-zinc-500">
+        We never sell your data. Opt out anytime by replying STOP.
       </p>
     </form>
   );

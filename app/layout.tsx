@@ -1,18 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { BRAND } from "@/lib/config";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const SITE_URL = "https://homekey-psi.vercel.app";
 
@@ -108,11 +97,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-white text-zinc-900">
+    <html lang="en" className="h-full antialiased">
+      <body className="min-h-full flex flex-col bg-white text-zinc-950">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }}
@@ -121,69 +107,79 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSONLD) }}
         />
-        <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white/80 backdrop-blur">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-            <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-              <span
-                aria-hidden
-                className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-500 text-white"
-              >
-                🔑
-              </span>
-              <span className="text-lg">{BRAND.name}</span>
+        <header className="sticky top-0 z-30 border-b border-zinc-200/70 bg-white/85 backdrop-blur-md">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
+            <Link
+              href="/"
+              className="text-base font-semibold tracking-[-0.02em] text-zinc-950"
+            >
+              {BRAND.name}
             </Link>
-            <nav className="flex items-center gap-6 text-sm text-zinc-600">
-              <Link href="/onboarding" className="hover:text-zinc-900">
+            <nav className="flex items-center gap-7 text-xs uppercase tracking-[0.12em] text-zinc-600">
+              <Link href="/onboarding" className="hover:text-zinc-950">
                 Find my grants
+              </Link>
+              <Link href="/#how" className="hidden hover:text-zinc-950 sm:inline">
+                How it works
+              </Link>
+              <Link
+                href="/onboarding"
+                className="rounded-full bg-zinc-950 px-5 py-2 text-xs uppercase tracking-[0.08em] text-white transition hover:bg-zinc-800"
+              >
+                Start
               </Link>
             </nav>
           </div>
         </header>
         <main className="flex-1">{children}</main>
-        <footer className="border-t border-zinc-200 bg-zinc-50 px-6 py-10 text-sm text-zinc-600">
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 sm:grid-cols-3">
+        <footer className="border-t border-zinc-200 bg-white">
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-16 sm:grid-cols-3">
             <div>
-              <div className="flex items-center gap-2 font-semibold text-zinc-900">
-                <span
-                  aria-hidden
-                  className="grid h-7 w-7 place-items-center rounded-md bg-gradient-to-br from-indigo-500 to-emerald-500 text-white text-sm"
-                >
-                  🔑
-                </span>
+              <p className="text-2xl font-semibold tracking-[-0.025em] text-zinc-950">
                 {BRAND.name}
-              </div>
-              <p className="mt-3 text-zinc-500">{BRAND.description}</p>
+              </p>
+              <p className="mt-3 max-w-xs text-sm leading-relaxed text-zinc-600">
+                Free first-time home buyer grant finder. Federal, state, county,
+                and city programs — kept current automatically.
+              </p>
             </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <div className="text-sm">
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
                 A community resource
               </p>
-              <p className="mt-2 text-zinc-500">
-                {BRAND.name} is a free grant-discovery and application-help service
-                for first-time home buyers. We help you find and apply for every federal,
-                state, county, and city grant you qualify for. No loans, no credit pull,
-                no fees, ever.
+              <p className="mt-3 text-zinc-700">
+                No loans. No credit pull. No data sold. Built so the money
+                governments set aside for first-time buyers actually reaches
+                them.
               </p>
             </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <div className="text-sm">
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
                 Founder
               </p>
-              <p className="mt-2 font-medium text-zinc-900">{BRAND.realtor.name}</p>
-              <p className="text-zinc-500">First-time-buyer grant specialist</p>
-              <p className="text-zinc-500">Based in {BRAND.realtor.market}</p>
-              <p className="mt-3">
-                <a
-                  href={`mailto:${BRAND.realtor.email}`}
-                  className="text-indigo-600 hover:text-indigo-700"
-                >
-                  {BRAND.realtor.email}
-                </a>
+              <p className="mt-3 font-medium text-zinc-950">
+                {BRAND.realtor.name}
               </p>
+              <p className="text-zinc-600">First-time-buyer grant specialist</p>
+              <p className="text-zinc-600">{BRAND.realtor.market}</p>
+              <a
+                href={`mailto:${BRAND.realtor.email}`}
+                className="mt-3 inline-block text-zinc-950 underline-offset-4 hover:underline"
+              >
+                {BRAND.realtor.email}
+              </a>
             </div>
           </div>
-          <div className="mx-auto mt-8 max-w-6xl border-t border-zinc-200 pt-6 text-xs text-zinc-400">
-            © {new Date().getFullYear()} {BRAND.name}. Information shown is for guidance only — confirm eligibility with the official program administrator before applying.
+          <div className="border-t border-zinc-200">
+            <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-3 px-6 py-6 text-xs text-zinc-500 sm:flex-row sm:items-center">
+              <p>
+                © {new Date().getFullYear()} {BRAND.name}. All rights reserved.
+              </p>
+              <p>
+                Information shown is for guidance only. Confirm eligibility with
+                the official program administrator before applying.
+              </p>
+            </div>
           </div>
         </footer>
       </body>
