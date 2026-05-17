@@ -1,36 +1,31 @@
-// Hand-drawn NOVA wordmark, modeled on Tesla's logotype:
-// - Even, thin strokes
-// - Sharp corners, no rounded terminals
-// - "A" with no horizontal crossbar (triangle apex)
-// - Wide, equal letter spacing
-//
-// Pure SVG so it renders identically on every device and never depends on a
-// webfont. Color inherits from the parent via currentColor.
+// NOVA wordmark — sharp, condensed, geometric. Custom SVG glyphs designed
+// for Nova: thin even strokes, square terminals, miter joins, no curves
+// except where mathematically necessary. Renders identical on every device.
 
 import * as React from "react";
 
 type Props = React.SVGProps<SVGSVGElement> & { height?: number };
 
-export function NovaWordmark({
-  height = 18,
-  className,
-  ...rest
-}: Props) {
-  // Each letter is drawn inside a 60×100 grid, total 4 letters + 3 gaps.
-  // Letter width 60, gap 36 → total width 4*60 + 3*36 = 348.
-  const letterW = 60;
-  const gap = 36;
-  const stroke = 8;
-  const w = 4 * letterW + 3 * gap;
-  const h = 100;
+export function NovaWordmark({ height = 18, className, ...rest }: Props) {
+  // Geometry: each letter occupies an 80×120 cell. 3 gaps of 28 between
+  // letters. Stroke 9. Condensed feel comes from the narrow cell width
+  // relative to height (2:3 ratio).
+  const cell = { w: 80, h: 120 };
+  const gap = 28;
+  const stroke = 9;
+  const totalW = 4 * cell.w + 3 * gap;
+  const x = (i: number) => i * (cell.w + gap);
 
-  const x = (i: number) => i * (letterW + gap);
+  // Half-stroke inset so square line endcaps still fall inside the cell.
+  const inset = stroke / 2;
+  const W = cell.w;
+  const H = cell.h;
 
   return (
     <svg
       role="img"
       aria-label="NOVA"
-      viewBox={`0 0 ${w} ${h}`}
+      viewBox={`0 0 ${totalW} ${H}`}
       height={height}
       className={className}
       fill="none"
@@ -40,33 +35,40 @@ export function NovaWordmark({
       strokeLinejoin="miter"
       {...rest}
     >
-      {/* N — two verticals + diagonal */}
+      {/* N — verticals connected by a single diagonal */}
       <g transform={`translate(${x(0)} 0)`}>
-        <line x1={stroke / 2} y1={0} x2={stroke / 2} y2={h} />
-        <line x1={letterW - stroke / 2} y1={0} x2={letterW - stroke / 2} y2={h} />
-        <line x1={stroke / 2} y1={0} x2={letterW - stroke / 2} y2={h} />
+        <line x1={inset} y1={0} x2={inset} y2={H} />
+        <line x1={W - inset} y1={0} x2={W - inset} y2={H} />
+        <line x1={inset} y1={inset} x2={W - inset} y2={H - inset} />
       </g>
 
-      {/* O — a perfect ellipse (Tesla letterforms favor pure geometric primitives) */}
+      {/* O — chamfered hexagon (sharp angles instead of a soft ellipse) */}
       <g transform={`translate(${x(1)} 0)`}>
-        <ellipse
-          cx={letterW / 2}
-          cy={h / 2}
-          rx={letterW / 2 - stroke / 2}
-          ry={h / 2 - stroke / 2}
+        <polygon
+          points={[
+            `${W * 0.25},${inset}`,
+            `${W - W * 0.25},${inset}`,
+            `${W - inset},${H * 0.3}`,
+            `${W - inset},${H - H * 0.3}`,
+            `${W - W * 0.25},${H - inset}`,
+            `${W * 0.25},${H - inset}`,
+            `${inset},${H - H * 0.3}`,
+            `${inset},${H * 0.3}`,
+          ].join(" ")}
         />
       </g>
 
-      {/* V — two diagonals meeting at bottom point */}
+      {/* V — two diagonals to a sharp bottom point */}
       <g transform={`translate(${x(2)} 0)`}>
-        <line x1={stroke / 2} y1={0} x2={letterW / 2} y2={h} />
-        <line x1={letterW - stroke / 2} y1={0} x2={letterW / 2} y2={h} />
+        <line x1={inset} y1={0} x2={W / 2} y2={H - inset / 2} />
+        <line x1={W - inset} y1={0} x2={W / 2} y2={H - inset / 2} />
       </g>
 
-      {/* A — two diagonals meeting at top point, NO crossbar (Tesla A) */}
+      {/* A — two diagonals to a sharp top point + offset crossbar (Nova's mark) */}
       <g transform={`translate(${x(3)} 0)`}>
-        <line x1={stroke / 2} y1={h} x2={letterW / 2} y2={0} />
-        <line x1={letterW - stroke / 2} y1={h} x2={letterW / 2} y2={0} />
+        <line x1={inset} y1={H} x2={W / 2} y2={inset / 2} />
+        <line x1={W - inset} y1={H} x2={W / 2} y2={inset / 2} />
+        <line x1={W * 0.27} y1={H * 0.62} x2={W * 0.73} y2={H * 0.62} />
       </g>
     </svg>
   );
