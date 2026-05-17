@@ -1,10 +1,27 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getGrantById } from "@/lib/matcher";
 import { ApplyLeadForm } from "@/components/ApplyLeadForm";
 import { BackLink } from "@/components/BackLink";
 import { BRAND } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
+
+type ApplyParams = Promise<{ id: string }>;
+
+export async function generateMetadata({ params }: { params: ApplyParams }): Promise<Metadata> {
+  const { id } = await params;
+  const grant = await getGrantById(id);
+  if (!grant) return {};
+  const title = `Apply for ${grant.name}`;
+  const description = `Start your ${grant.name} application — free, no credit pull. A ${BRAND.name} grant specialist will walk you through eligibility within 24 hours.`;
+  return {
+    title,
+    description,
+    alternates: { canonical: `https://homekey-psi.vercel.app/apply/${grant.id}` },
+    openGraph: { title, description },
+  };
+}
 
 function programTypeLabel(t: string) {
   return (

@@ -1,8 +1,24 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getGrantById } from "@/lib/matcher";
 
 type Params = Promise<{ id: string }>;
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { id } = await params;
+  const grant = await getGrantById(id);
+  if (!grant) return {};
+  const where = grant.level === "federal" ? "Federal" : grant.state ?? "";
+  const title = `${grant.name} — ${where} Grant Eligibility & How to Apply`;
+  const description = `${grant.summary} See if you qualify in 3 minutes — free, no credit pull.`;
+  return {
+    title,
+    description,
+    alternates: { canonical: `https://homekey-psi.vercel.app/grant/${grant.id}` },
+    openGraph: { title, description },
+  };
+}
 
 export default async function GrantDetailPage({ params }: { params: Params }) {
   const { id } = await params;
