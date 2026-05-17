@@ -33,11 +33,47 @@ export default async function ResultsPage({
 }) {
   const params = await searchParams;
   const buyer = parseBuyer(params);
-  const matches = await matchGrants(buyer, { useAi: false, limit: 20 });
+  const rawMatches = await matchGrants(buyer, { useAi: false, limit: 20 });
 
-  const totalAmount = matches
+  // Sort: best matches first (Optimal > Great > Good), then within each tier
+  // surface true grants before loan-shaped programs. Buyers came for grants,
+  // not mortgages — keep that promise on the page order.
+  const confidenceRank: Record<string, number> = { high: 0, medium: 1, low: 2 };
+  const programRank: Record<string, number> = {
+    grant: 0,
+    tax_credit: 1,
+    voucher: 2,
+    forgivable_loan: 3,
+    deferred_loan: 4,
+    low_interest_loan: 5,
+  };
+  const allSorted = [...rawMatches].sort((a, b) => {
+    const conf = confidenceRank[a.confidence] - confidenceRank[b.confidence];
+    if (conf !== 0) return conf;
+    const prog = (programRank[a.grant.programType] ?? 9) - (programRank[b.grant.programType] ?? 9);
+    if (prog !== 0) return prog;
+    return b.finalScore - a.finalScore;
+  });
+
+  const GRANT_TYPES = new Set(["grant", "tax_credit", "voucher", "forgivable_loan"]);
+  const grantMatches = allSorted.filter((m) => GRANT_TYPES.has(m.grant.programType));
+  const loanMatches = allSorted.filter((m) => !GRANT_TYPES.has(m.grant.programType));
+
+  const activeTab = (params.tab === "loans" ? "loans" : "grants") as "grants" | "loans";
+  const matches = activeTab === "grants" ? grantMatches : loanMatches;
+
+  const totalAmount = grantMatches
     .filter((m) => m.confidence !== "low")
     .reduce((sum, m) => sum + (m.grant.amountMax ?? 0), 0);
+
+  // Preserve all other params when switching tabs
+  const carryParams = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) {
+    if (k !== "tab" && v) carryParams.set(k, v);
+  }
+  const grantsHref = `/results?${carryParams.toString()}`;
+  carryParams.set("tab", "loans");
+  const loansHref = `/results?${carryParams.toString()}`;
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
@@ -46,11 +82,14 @@ export default async function ResultsPage({
           Your matches
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
-          We found <span className="text-indigo-600">{matches.length}</span> programs you may qualify for in {buyer.city ? `${buyer.city}, ` : ""}{buyer.state}.
+          We found <span className="text-indigo-600">{grantMatches.length}</span> grants and{" "}
+          <span className="text-zinc-700">{loanMatches.length}</span> loan programs you may qualify for in{" "}
+          {buyer.city ? `${buyer.city}, ` : ""}
+          {buyer.state}.
         </h1>
         {totalAmount > 0 && (
           <p className="mt-3 text-lg text-zinc-600">
-            Estimated maximum stackable benefit:{" "}
+            Estimated maximum stackable grant benefit:{" "}
             <span className="font-semibold text-zinc-900">
               ${totalAmount.toLocaleString()}
             </span>{" "}
@@ -61,12 +100,44 @@ export default async function ResultsPage({
 
       <LeadCaptureBar buyer={buyer} matchedIds={matches.map((m) => m.grant.id)} />
 
+      <div
+        role="tablist"
+        aria-label="Filter by program type"
+        className="mt-8 flex gap-1 rounded-full bg-zinc-100 p-1"
+      >
+        <Link
+          href={grantsHref}
+          role="tab"
+          aria-selected={activeTab === "grants"}
+          className={`flex-1 rounded-full px-4 py-2 text-center text-sm font-medium transition ${
+            activeTab === "grants"
+              ? "bg-white text-zinc-900 shadow-sm ring-1 ring-zinc-200"
+              : "text-zinc-600 hover:text-zinc-900"
+          }`}
+        >
+          Grants <span className="ml-1 text-xs text-zinc-500">({grantMatches.length})</span>
+        </Link>
+        <Link
+          href={loansHref}
+          role="tab"
+          aria-selected={activeTab === "loans"}
+          className={`flex-1 rounded-full px-4 py-2 text-center text-sm font-medium transition ${
+            activeTab === "loans"
+              ? "bg-white text-zinc-900 shadow-sm ring-1 ring-zinc-200"
+              : "text-zinc-600 hover:text-zinc-900"
+          }`}
+        >
+          Loans <span className="ml-1 text-xs text-zinc-500">({loanMatches.length})</span>
+        </Link>
+      </div>
+
       <div className="mt-6 space-y-4">
         {matches.length === 0 && (
           <div className="rounded-2xl border border-zinc-200 bg-white p-8 text-center">
             <p className="text-zinc-600">
-              No matches found with the current criteria. Try widening your profile —
-              especially income, first-time buyer status, or removing city/county.
+              {activeTab === "grants"
+                ? "No grants matched your current criteria. Try widening your profile — especially income, first-time buyer status, or city/county."
+                : "No loan programs matched your current criteria."}
             </p>
             <Link
               href="/onboarding"
@@ -91,11 +162,11 @@ export default async function ResultsPage({
 }
 
 function GrantCard({ match }: { match: Awaited<ReturnType<typeof matchGrants>>[number] }) {
-  const { grant, finalScore, confidence, whyQualify, whyDisqualify } = match;
-  const badge = {
-    high: "bg-emerald-100 text-emerald-800 ring-emerald-200",
-    medium: "bg-amber-100 text-amber-800 ring-amber-200",
-    low: "bg-zinc-100 text-zinc-700 ring-zinc-200",
+  const { grant, confidence, whyQualify, whyDisqualify } = match;
+  const tier = {
+    high: { label: "Optimal match", classes: "bg-emerald-100 text-emerald-800 ring-emerald-200" },
+    medium: { label: "Great match", classes: "bg-amber-100 text-amber-800 ring-amber-200" },
+    low: { label: "Good match", classes: "bg-zinc-100 text-zinc-700 ring-zinc-200" },
   }[confidence];
 
   const levelLabel = {
@@ -116,8 +187,8 @@ function GrantCard({ match }: { match: Awaited<ReturnType<typeof matchGrants>>[n
             <span className="rounded-full bg-indigo-50 px-2 py-0.5 font-medium text-indigo-700">
               {grant.programType.replaceAll("_", " ")}
             </span>
-            <span className={`rounded-full px-2 py-0.5 font-medium ring-1 ${badge}`}>
-              {finalScore}% · {confidence} confidence
+            <span className={`rounded-full px-2 py-0.5 font-medium ring-1 ${tier.classes}`}>
+              {tier.label}
             </span>
           </div>
           <h3 className="mt-3 text-xl font-semibold text-zinc-900">
