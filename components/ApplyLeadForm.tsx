@@ -120,7 +120,7 @@ export function ApplyLeadForm({
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-xs font-medium uppercase tracking-[0.14em] text-zinc-950 transition hover:bg-zinc-100 disabled:opacity-60 sm:w-auto sm:min-w-[280px]"
+        className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-[#3457dc] px-6 py-4 text-xs font-medium uppercase tracking-[0.14em] text-white transition hover:bg-[#2742b0] disabled:opacity-60 sm:w-auto sm:min-w-[280px]"
       >
         {status === "submitting" ? "Sending…" : "Start my grant application →"}
       </button>

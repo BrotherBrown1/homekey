@@ -11,12 +11,13 @@ export default function HomePage() {
         bgVisual={
           <div className="absolute inset-0">
             <div className="absolute inset-0 bg-gradient-to-b from-white via-white to-zinc-50" />
-            <div className="absolute -right-32 top-1/4 h-[40rem] w-[40rem] rounded-full bg-emerald-200/40 blur-3xl" />
-            <div className="absolute -left-40 bottom-0 h-[36rem] w-[36rem] rounded-full bg-indigo-200/40 blur-3xl" />
           </div>
         }
       >
-        <Eyebrow>{BRAND.name}</Eyebrow>
+        <div className="flex items-center gap-3">
+          <span className="inline-flex h-2 w-2 rounded-full bg-[#30d158] shadow-[0_0_0_4px_rgba(48,209,88,0.15)]" />
+          <Eyebrow>Live · 82 programs · all 50 states</Eyebrow>
+        </div>
         <Headline>
           Find the grants that unlock
           <br className="hidden sm:block" /> your first home.
@@ -210,14 +211,14 @@ function CtaPair({
   secondary: { href: string; label: string };
   tone?: "light" | "dark";
 }) {
+  // Tesla-style: primary is always the saturated blue you want clicked;
+  // secondary is the lower-contrast neutral.
   const primaryCls =
-    tone === "dark"
-      ? "bg-white text-zinc-950 hover:bg-zinc-100"
-      : "bg-zinc-950 text-white hover:bg-zinc-800";
+    "bg-[#3457dc] text-white hover:bg-[#2742b0]";
   const secondaryCls =
     tone === "dark"
       ? "bg-white/10 text-white ring-1 ring-inset ring-white/20 backdrop-blur hover:bg-white/15"
-      : "bg-white text-zinc-950 ring-1 ring-inset ring-zinc-200 hover:bg-zinc-50";
+      : "bg-white text-zinc-950 ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50";
   return (
     <div className="mt-10 flex flex-col gap-3 sm:flex-row">
       <Link

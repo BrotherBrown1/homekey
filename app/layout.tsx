@@ -111,9 +111,10 @@ export default function RootLayout({
           <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
             <Link
               href="/"
-              className="text-base font-semibold tracking-[-0.02em] text-zinc-950"
+              aria-label={BRAND.name}
+              className="text-[15px] font-medium uppercase leading-none tracking-[0.42em] text-zinc-950"
             >
-              {BRAND.name}
+              {BRAND.name.toUpperCase()}
             </Link>
             <nav className="flex items-center gap-7 text-xs uppercase tracking-[0.12em] text-zinc-600">
               <Link href="/onboarding" className="hover:text-zinc-950">
@@ -124,7 +125,7 @@ export default function RootLayout({
               </Link>
               <Link
                 href="/onboarding"
-                className="rounded-full bg-zinc-950 px-5 py-2 text-xs uppercase tracking-[0.08em] text-white transition hover:bg-zinc-800"
+                className="rounded-full bg-[#3457dc] px-5 py-2 text-xs uppercase tracking-[0.08em] text-white transition hover:bg-[#2742b0]"
               >
                 Start
               </Link>
@@ -133,24 +134,14 @@ export default function RootLayout({
         </header>
         <main className="flex-1">{children}</main>
         <footer className="border-t border-zinc-200 bg-white">
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-16 sm:grid-cols-3">
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-16 sm:grid-cols-2">
             <div>
-              <p className="text-2xl font-semibold tracking-[-0.025em] text-zinc-950">
-                {BRAND.name}
+              <p className="text-[15px] font-medium uppercase tracking-[0.42em] text-zinc-950">
+                {BRAND.name.toUpperCase()}
               </p>
-              <p className="mt-3 max-w-xs text-sm leading-relaxed text-zinc-600">
-                Free first-time home buyer grant finder. Federal, state, county,
-                and city programs — kept current automatically.
-              </p>
-            </div>
-            <div className="text-sm">
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
-                A community resource
-              </p>
-              <p className="mt-3 text-zinc-700">
-                No loans. No credit pull. No data sold. Built so the money
-                governments set aside for first-time buyers actually reaches
-                them.
+              <p className="mt-4 max-w-md text-sm leading-relaxed text-zinc-600">
+                First-time home buyer grant finder. Federal, state, county, and
+                city programs.
               </p>
             </div>
             <div className="text-sm">
@@ -160,11 +151,9 @@ export default function RootLayout({
               <p className="mt-3 font-medium text-zinc-950">
                 {BRAND.realtor.name}
               </p>
-              <p className="text-zinc-600">First-time-buyer grant specialist</p>
-              <p className="text-zinc-600">{BRAND.realtor.market}</p>
               <a
                 href={`mailto:${BRAND.realtor.email}`}
-                className="mt-3 inline-block text-zinc-950 underline-offset-4 hover:underline"
+                className="mt-1 inline-block text-zinc-950 underline-offset-4 hover:underline"
               >
                 {BRAND.realtor.email}
               </a>

@@ -207,7 +207,7 @@ function GrantCard({ match }: { match: Awaited<ReturnType<typeof matchGrants>>[n
         <div className="flex flex-col gap-2 sm:w-48 sm:flex-none">
           <Link
             href={`/apply/${grant.id}`}
-            className="inline-flex items-center justify-center rounded-full bg-zinc-950 px-6 py-3 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-zinc-800"
+            className="inline-flex items-center justify-center rounded-full bg-[#3457dc] px-6 py-3 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-[#2742b0]"
           >
             Apply
           </Link>
@@ -230,7 +230,7 @@ function GrantCard({ match }: { match: Awaited<ReturnType<typeof matchGrants>>[n
               <ul className="mt-4 space-y-2 text-sm text-zinc-700">
                 {whyQualify.slice(0, 4).map((r, i) => (
                   <li key={i} className="flex gap-3">
-                    <span className="mt-[3px] inline-block h-[5px] w-[5px] flex-none rounded-full bg-emerald-500" />
+                    <span className="mt-[3px] inline-block h-[5px] w-[5px] flex-none rounded-full bg-[#30d158]" />
                     <span>{r}</span>
                   </li>
                 ))}

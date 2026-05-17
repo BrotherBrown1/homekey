@@ -141,7 +141,7 @@ export default async function GrantDetailPage({ params }: { params: Params }) {
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <a
               href={`/apply/${grant.id}`}
-              className="inline-flex min-w-[220px] items-center justify-center rounded-full bg-white px-8 py-3.5 text-xs font-medium uppercase tracking-[0.12em] text-zinc-950 transition hover:bg-zinc-100"
+              className="inline-flex min-w-[220px] items-center justify-center rounded-full bg-[#3457dc] px-8 py-3.5 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-[#2742b0]"
             >
               Apply with help
             </a>

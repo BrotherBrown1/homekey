@@ -75,7 +75,7 @@ export function LeadCaptureBar({
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-white px-6 py-3 text-xs font-medium uppercase tracking-[0.12em] text-zinc-950 transition hover:bg-zinc-100"
+            className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-[#3457dc] px-6 py-3 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-[#2742b0]"
           >
             Save my matches
           </button>
@@ -143,7 +143,7 @@ export function LeadCaptureBar({
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-white px-6 py-3 text-xs font-medium uppercase tracking-[0.12em] text-zinc-950 transition hover:bg-zinc-100 disabled:opacity-60"
+          className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-[#3457dc] px-6 py-3 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-[#2742b0] disabled:opacity-60"
         >
           {status === "submitting" ? "Saving…" : "Save matches"}
         </button>

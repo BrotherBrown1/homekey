@@ -134,45 +134,65 @@ export default function OnboardingPage() {
 
         {step === 1 && (
           <StepShell title="Tell us about your household" subtitle="This determines income-based eligibility.">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
               <Field label="Household size">
                 <input
                   type="number"
+                  inputMode="numeric"
                   min={1}
                   max={15}
                   className="input"
-                  value={form.householdSize}
-                  onChange={(e) => update("householdSize", Number(e.target.value))}
+                  value={form.householdSize || ""}
+                  placeholder="e.g., 2"
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    update("householdSize", v === "" ? 0 : Number(v));
+                  }}
                 />
               </Field>
               <Field label="Annual household income">
                 <input
                   type="number"
+                  inputMode="numeric"
                   min={0}
                   step={1000}
                   className="input"
-                  value={form.annualIncome}
-                  onChange={(e) => update("annualIncome", Number(e.target.value))}
+                  value={form.annualIncome || ""}
+                  placeholder="e.g., 60000"
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    update("annualIncome", v === "" ? 0 : Number(v));
+                  }}
                 />
               </Field>
               <Field label="Target purchase price">
                 <input
                   type="number"
+                  inputMode="numeric"
                   min={0}
                   step={5000}
                   className="input"
-                  value={form.targetPurchasePrice}
-                  onChange={(e) => update("targetPurchasePrice", Number(e.target.value))}
+                  value={form.targetPurchasePrice || ""}
+                  placeholder="e.g., 200000"
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    update("targetPurchasePrice", v === "" ? 0 : Number(v));
+                  }}
                 />
               </Field>
               <Field label="Credit score (approx.)">
                 <input
                   type="number"
+                  inputMode="numeric"
                   min={300}
                   max={850}
                   className="input"
-                  value={form.creditScore}
-                  onChange={(e) => update("creditScore", Number(e.target.value))}
+                  value={form.creditScore || ""}
+                  placeholder="e.g., 680"
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    update("creditScore", v === "" ? 0 : Number(v));
+                  }}
                 />
               </Field>
             </div>
@@ -263,9 +283,11 @@ export default function OnboardingPage() {
         <div className="mt-12 flex items-center justify-between gap-4 border-t border-zinc-200 pt-8">
           <button
             type="button"
-            onClick={() => setStep((s) => Math.max(0, s - 1))}
-            disabled={step === 0}
-            className="text-xs uppercase tracking-[0.12em] text-zinc-500 hover:text-zinc-950 disabled:opacity-30"
+            onClick={() => {
+              if (step === 0) router.push("/");
+              else setStep((s) => s - 1);
+            }}
+            className="text-xs uppercase tracking-[0.12em] text-zinc-500 hover:text-zinc-950"
           >
             ← Back
           </button>
@@ -273,7 +295,7 @@ export default function OnboardingPage() {
             <button
               type="button"
               onClick={() => setStep((s) => s + 1)}
-              className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-zinc-950 px-8 py-3 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-zinc-800"
+              className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-[#3457dc] px-8 py-3 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-[#2742b0]"
             >
               Continue
             </button>
@@ -282,7 +304,7 @@ export default function OnboardingPage() {
               type="button"
               onClick={submit}
               disabled={submitting}
-              className="inline-flex min-w-[200px] items-center justify-center rounded-full bg-zinc-950 px-8 py-3 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-zinc-800 disabled:opacity-60"
+              className="inline-flex min-w-[200px] items-center justify-center rounded-full bg-[#3457dc] px-8 py-3 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-[#2742b0] disabled:opacity-60"
             >
               {submitting ? "Matching…" : "Show my grants"}
             </button>
