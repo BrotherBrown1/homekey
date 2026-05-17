@@ -135,7 +135,8 @@ export function LeadCaptureBar({
           type="checkbox"
           checked={wantsRealtor}
           onChange={(e) => setWantsRealtor(e.target.checked)}
-          className="h-4 w-4 accent-white"
+          style={{ accentColor: "#30d158" }}
+          className="h-4 w-4"
         />
         Have a grant specialist contact me to help me apply
       </label>
