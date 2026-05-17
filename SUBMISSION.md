@@ -20,7 +20,7 @@ As a Michigan realtor, I hear the same question every week: *"Are there any gran
 
 But matching is only half the problem. Programs change — funding cycles end, amounts get raised, new programs launch in response to housing-affordability legislation. So we built a second agent: the **HomeKey Curator**. It runs on a weekly schedule. For every program in our database (82 today, growing weekly), it fetches the source URL, hands the live page to watsonx.ai with the stored record, and asks: *Did anything material change?* If the model is confident, the Curator posts a diff to a human-review queue at `/admin`. I approve or reject the change in seconds. The buyer-facing data is always within a week of the source of truth — without a content team.
 
-The buyer flow is free. Buyers who want hands-on help can opt in to a realtor follow-up — converting a public good into a sustainable lead-generation channel for my real-estate practice.
+The buyer flow is free. Buyers who want hands-on help connect with a HomeKey grant specialist who walks them through eligibility and the official application — a free public service for first-time home buyers and families who need down-payment / closing-cost assistance to make homeownership possible.
 
 **Impact.** We're shipping at hackathon launch with 82 programs covering all 50 states + DC. Within 90 days, the Curator will have crawled and incorporated changes from every state HFA quarterly funding announcement — something no single human could keep up with. The same architecture (one buyer-facing chat agent + one scheduled curator agent, both powered by watsonx) generalizes to renter assistance, student-loan forgiveness, and small-business grants. HomeKey is the first vertical.
 

@@ -4,7 +4,7 @@ export const BRAND = {
   name: "HomeKey",
   tagline: "Find the grants that unlock your first home",
   description:
-    "We match first-time home buyers, veterans, teachers, and more with federal, state, county, and city grant programs — updated weekly.",
+    "Free grant-matching for first-time home buyers. Federal, state, county, and city programs — updated weekly so the money you qualify for never slips through.",
   realtor: {
     name: "Christian Brown",
     email: "myrealtorbrown@gmail.com",

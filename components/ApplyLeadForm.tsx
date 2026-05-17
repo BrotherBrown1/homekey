@@ -40,7 +40,7 @@ export function ApplyLeadForm({
       if (data.success) {
         setStatus("ok");
         setMessage(
-          `Got it. ${grantName} is locked in. A specialist will reach out within 24 hours at ${email} or ${phone}.`
+          `Got it — a grant specialist will reach out within 24 hours to start your ${grantName} application at ${email} or ${phone}.`
         );
       } else {
         setStatus("error");
@@ -55,12 +55,11 @@ export function ApplyLeadForm({
   if (status === "ok") {
     return (
       <div className="rounded-2xl bg-emerald-50 p-5 text-emerald-900 ring-1 ring-emerald-200">
-        <p className="font-medium">✓ Got it — you're in the queue for {grantName}.</p>
+        <p className="font-medium">✓ You're in. We'll start your {grantName} application.</p>
         <p className="mt-2 text-sm text-emerald-800">
-          A specialist will reach out within 24 hours at <strong>{email}</strong> or <strong>{phone}</strong>.
-          They'll walk you through eligibility, answer questions, and coordinate with a participating
-          lender who files this program alongside your mortgage paperwork. No application fee, no
-          credit pull until you're ready.
+          A grant specialist will reach out within 24 hours at <strong>{email}</strong> or <strong>{phone}</strong>.
+          They'll confirm your eligibility, gather what you need, and submit the official
+          application with you. Free. No credit pull. No obligation.
         </p>
       </div>
     );
@@ -119,7 +118,7 @@ export function ApplyLeadForm({
         disabled={status === "submitting"}
         className="w-full rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:from-indigo-600 hover:to-emerald-600 disabled:opacity-60"
       >
-        {status === "submitting" ? "Sending..." : "Get a specialist to help me apply →"}
+        {status === "submitting" ? "Sending..." : "Start my grant application →"}
       </button>
       {status === "error" && (
         <p className="text-sm text-red-400">{message}</p>

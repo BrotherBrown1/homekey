@@ -133,7 +133,7 @@ export function LeadCaptureBar({
           onChange={(e) => setWantsRealtor(e.target.checked)}
           className="accent-indigo-500"
         />
-        Have a realtor who knows these programs reach out to me
+        Have a grant specialist contact me to help me apply
       </label>
       <div className="mt-4 flex items-center gap-3">
         <button

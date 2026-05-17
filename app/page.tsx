@@ -51,19 +51,19 @@ export default function HomePage() {
                   <MockGrant
                     name="MSHDA $10K Down Payment Assistance"
                     sponsor="Michigan State Housing Development Authority"
-                    amount="Up to $10,000"
+                    amount="Up to $10,000 grant"
                     score={92}
                   />
                   <MockGrant
-                    name="FHA 203(b) Mortgage"
-                    sponsor="U.S. Department of Housing & Urban Development"
-                    amount="3.5% down"
+                    name="Good Neighbor Next Door"
+                    sponsor="U.S. Department of HUD"
+                    amount="50% off list price"
                     score={88}
                   />
                   <MockGrant
-                    name="Detroit Home Mortgage"
-                    sponsor="City of Detroit"
-                    amount="Appraisal-gap coverage"
+                    name="FHLB Affordable Housing Program"
+                    sponsor="Federal Home Loan Banks"
+                    amount="Up to $25,000 grant"
                     score={81}
                   />
                 </div>
@@ -106,7 +106,7 @@ export default function HomePage() {
             <Step
               n="3"
               title="Apply (or get help)"
-              body="Direct links to every program's official application. Want hands-on help? Our partner realtor can walk you through."
+              body="Click into any match for plain-English eligibility, the dollar amount, and a one-click way to start your application with a free grant specialist."
             />
           </div>
         </div>

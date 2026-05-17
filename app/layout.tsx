@@ -81,11 +81,22 @@ export default function RootLayout({
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                Built and maintained by
+                A community resource
+              </p>
+              <p className="mt-2 text-zinc-500">
+                {BRAND.name} is a free grant-discovery and application-help service
+                for first-time home buyers. We help you find and apply for every federal,
+                state, county, and city grant you qualify for. No loans, no credit pull,
+                no fees, ever.
+              </p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                Founder
               </p>
               <p className="mt-2 font-medium text-zinc-900">{BRAND.realtor.name}</p>
-              <p className="text-zinc-500">Licensed Michigan Realtor</p>
-              <p className="text-zinc-500">{BRAND.realtor.market}</p>
+              <p className="text-zinc-500">First-time-buyer grant specialist</p>
+              <p className="text-zinc-500">Based in {BRAND.realtor.market}</p>
               <p className="mt-3">
                 <a
                   href={`mailto:${BRAND.realtor.email}`}
@@ -93,15 +104,6 @@ export default function RootLayout({
                 >
                   {BRAND.realtor.email}
                 </a>
-              </p>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                Why this exists
-              </p>
-              <p className="mt-2 text-zinc-500">
-                Every year, billions of dollars in down-payment-assistance and first-time-homebuyer grants go unclaimed.
-                {BRAND.name} matches you with every program you qualify for in seconds — free, no credit pull.
               </p>
             </div>
           </div>

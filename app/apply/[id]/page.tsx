@@ -69,25 +69,25 @@ export default async function ApplyPage({
 
       <section className="mt-8 rounded-3xl bg-white p-6 ring-1 ring-zinc-200">
         <h2 className="text-lg font-semibold text-zinc-900">
-          What this program is
+          About this grant
         </h2>
         <p className="mt-2 text-zinc-700">{grant.summary}</p>
 
         <h3 className="mt-6 text-sm font-semibold text-zinc-900">
-          How it normally gets applied for
+          Why most people miss this money
         </h3>
         <p className="mt-2 text-sm text-zinc-600">
-          Programs like this run through a participating mortgage lender — not
-          a direct buyer application. Your loan officer files it as part of
-          your mortgage paperwork. That's why most buyers don't know they
-          exist: there's no "Apply" button on the buyer side.
+          Grant programs change quarterly. Funding windows open and close,
+          eligibility rules shift, and most buyers never hear about them.
+          That's the problem {BRAND.name} solves — we track every active
+          federal, state, county, and city program and tell you which ones
+          you qualify for.
         </p>
         <p className="mt-3 text-sm text-zinc-600">
-          That's where {BRAND.name} comes in. Fill in the form below and{" "}
-          <span className="font-medium text-zinc-900">{BRAND.realtor.name}</span>{" "}
-          (or his partner loan officer for your state) will reach out within
-          24 hours, walk you through eligibility, and submit the application
-          alongside your mortgage.
+          A {BRAND.name} grant specialist will help you actually claim this
+          one. They'll confirm your eligibility, gather what you need to
+          submit, and walk you through the official application form
+          step-by-step. Free.
         </p>
       </section>
 
@@ -96,13 +96,12 @@ export default async function ApplyPage({
         className="mt-8 rounded-3xl bg-zinc-900 p-6 text-white ring-1 ring-zinc-800"
       >
         <h2 className="text-xl font-semibold">
-          Get help applying for this grant
+          Apply for this grant
         </h2>
         <p className="mt-2 text-sm text-zinc-300">
-          Drop your info below and {BRAND.realtor.name} (or his partner loan
-          officer for your state) will personally walk you through the
-          application within 24 hours. Free, no credit pull, no obligation.
-          You can step away anytime.
+          Tell us how to reach you. A {BRAND.name} grant specialist will
+          contact you within 24 hours to start your application for{" "}
+          {grant.name}. Free. No credit pull. No obligation.
         </p>
         <div className="mt-6">
           <ApplyLeadForm grantId={grant.id} grantName={grant.name} />
@@ -111,14 +110,14 @@ export default async function ApplyPage({
 
       <section className="mt-8 text-center text-sm text-zinc-500">
         <p>
-          Prefer to apply yourself?{" "}
+          Want to see the official program page first?{" "}
           <a
             href={`/apply/${grant.id}/direct`}
             target="_blank"
             rel="noopener noreferrer"
             className="font-medium text-indigo-600 hover:text-indigo-700"
           >
-            Open the official program page →
+            Open it on the sponsor's site →
           </a>
         </p>
       </section>

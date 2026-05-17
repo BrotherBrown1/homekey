@@ -5,7 +5,7 @@ A buyer-facing grant-matching app powered by two **IBM watsonx Orchestrate** age
 - **HomeKey Buyer Advisor** (conversational): interviews a buyer, calls our REST skills API, returns ranked matches with personalized "why you qualify" reasoning.
 - **HomeKey Curator** (scheduled): scrapes every housing-finance-agency source URL weekly, uses watsonx.ai to detect material changes, and queues diffs for human review at `/admin`.
 
-Built for the IBM watsonx hackathon. Designed as a long-term lead-generation channel for a Michigan real-estate practice.
+Built for the IBM watsonx hackathon. A free community resource for first-time home buyers — every federal, state, county, and city down-payment and closing-cost grant they qualify for, in one place, kept current by an autonomous agent.
 
 ## What's in the database
 
