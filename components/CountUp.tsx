@@ -13,7 +13,7 @@ type Props = {
   className?: string;
 };
 
-export function CountUp({ value, suffix = "", duration = 1400, className }: Props) {
+export function CountUp({ value, suffix = "", duration = 2400, className }: Props) {
   const [display, setDisplay] = useState(0);
   const [started, setStarted] = useState(false);
   const ref = useRef<HTMLSpanElement | null>(null);

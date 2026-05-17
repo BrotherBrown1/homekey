@@ -36,7 +36,7 @@ export default function HomePage() {
       <FullBleed bg="bg-zinc-950" text="text-white" align="end">
         <Eyebrow tone="dark">The opportunity</Eyebrow>
         <Headline>
-          $<CountUp value={18400} className="tabular-nums" duration={1800} />.
+          $<CountUp value={18400} className="tabular-nums" duration={3200} />.
           <br />
           On average, in your name.
         </Headline>
