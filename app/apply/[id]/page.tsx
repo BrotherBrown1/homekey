@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getGrantById } from "@/lib/matcher";
 import { ApplyLeadForm } from "@/components/ApplyLeadForm";
+import { BackLink } from "@/components/BackLink";
 import { BRAND } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
@@ -33,12 +34,7 @@ export default async function ApplyPage({
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10">
-      <a
-        href="/"
-        className="text-sm text-zinc-500 hover:text-zinc-900"
-      >
-        ← Back to {BRAND.name}
-      </a>
+      <BackLink fallbackHref="/">← Back to my matches</BackLink>
 
       <div className="mt-4 rounded-3xl bg-gradient-to-br from-indigo-50 via-white to-emerald-50 p-8 ring-1 ring-zinc-200">
         <p className="text-xs font-medium uppercase tracking-wide text-indigo-600">
@@ -100,11 +96,13 @@ export default async function ApplyPage({
         className="mt-8 rounded-3xl bg-zinc-900 p-6 text-white ring-1 ring-zinc-800"
       >
         <h2 className="text-xl font-semibold">
-          Have a specialist apply with me
+          Get help applying for this grant
         </h2>
         <p className="mt-2 text-sm text-zinc-300">
-          Free. No credit pull. {BRAND.realtor.name} responds within 24
-          hours. You can step away anytime.
+          Drop your info below and {BRAND.realtor.name} (or his partner loan
+          officer for your state) will personally walk you through the
+          application within 24 hours. Free, no credit pull, no obligation.
+          You can step away anytime.
         </p>
         <div className="mt-6">
           <ApplyLeadForm grantId={grant.id} grantName={grant.name} />
