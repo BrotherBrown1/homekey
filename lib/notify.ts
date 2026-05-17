@@ -65,7 +65,7 @@ export async function notifyLead(lead: LeadNotification): Promise<void> {
     return;
   }
 
-  const from = process.env.LEAD_NOTIFY_FROM ?? "HomeKey <onboarding@resend.dev>";
+  const from = process.env.LEAD_NOTIFY_FROM ?? `${BRAND.name} <onboarding@resend.dev>`;
   const to = process.env.LEAD_NOTIFY_TO ?? BRAND.realtor.email;
 
   try {

@@ -1,4 +1,4 @@
-# Orchestrate Agent 2 — HomeKey Curator
+# Orchestrate Agent 2 — Nova Curator
 
 A scheduled (non-conversational) agent that keeps the grant database current.
 
@@ -15,13 +15,13 @@ Every week:
 ### 1. Create the agent
 
 1. **Agents** → **+ New agent**.
-2. Name: **HomeKey Curator**
+2. Name: **Nova Curator**
 3. Type: **Scheduled / autonomous** (no chat UI).
 4. Foundation model: same as the Buyer Advisor (Granite 3 8B is plenty).
 5. **System prompt**:
 
 ```
-You are the HomeKey Curator. You run on a weekly schedule. Your job is to ensure the HomeKey grant database stays accurate.
+You are the Nova Curator. You run on a weekly schedule. Your job is to ensure the Nova grant database stays accurate.
 
 Workflow:
 1. Call listGrants to get all active programs.

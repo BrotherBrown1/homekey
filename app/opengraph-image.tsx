@@ -92,7 +92,7 @@ export default async function OGImage() {
             />
             Built by {BRAND.realtor.name} · Licensed Michigan Realtor
           </div>
-          <div>homekey-psi.vercel.app</div>
+          <div>{BRAND.realtor.market}</div>
         </div>
       </div>
     ),

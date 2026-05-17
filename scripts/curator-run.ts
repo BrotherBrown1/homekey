@@ -40,7 +40,7 @@ async function fetchSource(url: string): Promise<string> {
   const res = await fetch(url, {
     headers: {
       "User-Agent":
-        "HomeKey-Curator/1.0 (real estate grant tracker; contact: myrealtorbrown@gmail.com)",
+        "Nova-Curator/1.0 (grant tracker; contact: myrealtorbrown@gmail.com)",
       Accept: "text/html,application/xhtml+xml",
     },
     redirect: "follow",

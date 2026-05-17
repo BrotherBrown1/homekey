@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: HomeKey Skills API
+  title: Nova Skills API
   version: 1.0.0
   description: |
     HTTP endpoints that watsonx Orchestrate agents call as tools.
@@ -19,7 +19,7 @@ paths:
       summary: Find grants a buyer qualifies for
       description: |
         Given a buyer's profile, returns ranked grants with eligibility reasoning.
-        Use this as the primary skill for the HomeKey Buyer Advisor agent.
+        Use this as the primary skill for the Nova Buyer Advisor agent.
       requestBody:
         required: true
         content:

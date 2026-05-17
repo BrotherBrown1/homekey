@@ -31,7 +31,7 @@ async function checkGrant(grant: Awaited<ReturnType<typeof listActiveGrants>>[nu
     redirect: "follow",
     headers: {
       "user-agent":
-        "HomeKey-Curator/1.0 (Vercel Cron; contact: myrealtorbrown@gmail.com)",
+        "Nova-Curator/1.0 (Vercel Cron; contact: myrealtorbrown@gmail.com)",
       accept: "text/html",
     },
   });

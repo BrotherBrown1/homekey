@@ -106,7 +106,7 @@ export default function HomePage() {
             <Step
               n="3"
               title="Start your application"
-              body="One click to begin. A free HomeKey grant specialist walks you through eligibility and the official application — no credit pull, no fees."
+              body={`One click to begin. A free ${BRAND.name} grant specialist walks you through eligibility and the official application — no credit pull, no fees.`}
             />
           </div>
         </div>

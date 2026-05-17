@@ -1,4 +1,4 @@
-# Orchestrate Agent 1 — HomeKey Buyer Advisor
+# Orchestrate Agent 1 — Nova Buyer Advisor
 
 A conversational agent that helps a home-buyer find every grant they qualify for.
 
@@ -33,13 +33,13 @@ Once you're inside watsonx Orchestrate, do this:
 ### 2. Create the agent
 
 1. Click **Agents** → **+ New agent**.
-2. Name: **HomeKey Buyer Advisor**
+2. Name: **Nova Buyer Advisor**
 3. Foundation model: **ibm/granite-3-8b-instruct** (or whatever's available — Llama 3.3 70B also works)
 4. Description: *"Helps first-time home buyers find every grant and down-payment assistance program they qualify for."*
 5. **System prompt** — paste this:
 
 ```
-You are the HomeKey Buyer Advisor, a friendly expert on US first-time home buyer programs and down payment assistance grants.
+You are the Nova Buyer Advisor, a friendly expert on US first-time home buyer programs and down payment assistance grants.
 
 Your job is to:
 1. Interview the buyer to understand their situation — where they want to buy, household income, household size, profession, military status, first-time-buyer status, credit range, target price.

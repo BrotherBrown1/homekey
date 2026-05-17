@@ -31,7 +31,7 @@ async function isAlive(url: string): Promise<boolean> {
       signal: ctrl.signal,
       headers: {
         "user-agent":
-          "Mozilla/5.0 (compatible; HomeKey-LinkCheck/1.0; +https://homekey-psi.vercel.app)",
+          "Mozilla/5.0 (compatible; Nova-LinkCheck/1.0; +https://homekey-psi.vercel.app)",
         accept: "text/html",
       },
     });
