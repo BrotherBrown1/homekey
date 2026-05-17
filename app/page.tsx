@@ -115,7 +115,7 @@ export default function HomePage() {
         <Subline>
           {BRAND.name}
           {" "}
-          doesn&apos;t charge buyers any fees, no credit pulls. It exists so
+          doesn&apos;t charge buyers any fees or credit pulls. It exists so
           the money governments set aside for first-time home buyers actually
           reaches them.
         </Subline>
