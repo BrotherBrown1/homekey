@@ -7,12 +7,11 @@ import * as React from "react";
 type Props = React.SVGProps<SVGSVGElement> & { height?: number };
 
 export function NovaWordmark({ height = 18, className, ...rest }: Props) {
-  // Geometry: each letter occupies an 80×120 cell. 3 gaps of 28 between
-  // letters. Stroke 9. Condensed feel comes from the narrow cell width
-  // relative to height (2:3 ratio).
+  // Geometry: each letter occupies an 80×120 cell. Generous gap between
+  // letters for an open, refined feel. Thinner stroke for elegance.
   const cell = { w: 80, h: 120 };
-  const gap = 28;
-  const stroke = 9;
+  const gap = 40;
+  const stroke = 7;
   const totalW = 4 * cell.w + 3 * gap;
   const x = (i: number) => i * (cell.w + gap);
 
