@@ -1,7 +1,7 @@
 import { eq, or, and, inArray, isNull } from "drizzle-orm";
 import { db, schema, ensureSeeded } from "./db";
 import type { BuyerCriteria, Grant } from "./schema";
-import { chatJson, isConfigured as watsonxConfigured } from "./watsonx";
+import { chatJson, isConfigured as llmConfigured } from "./llm";
 
 export type MatchedGrant = {
   grant: Grant;
@@ -173,7 +173,7 @@ async function aiScore(
   grants: Grant[],
   buyer: BuyerCriteria
 ): Promise<Map<string, { score: number; reasoning: string }>> {
-  if (!watsonxConfigured() || grants.length === 0) {
+  if (!llmConfigured() || grants.length === 0) {
     return new Map();
   }
 

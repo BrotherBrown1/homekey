@@ -1,6 +1,6 @@
 import type { BuyerCriteria, Grant } from "./schema";
 import type { MatchedGrant } from "./matcher";
-import { chatJson, isConfigured as watsonxConfigured } from "./watsonx";
+import { chatJson, isConfigured as llmConfigured } from "./llm";
 
 export type ValidationVerdict = "eligible" | "uncertain" | "ineligible";
 
@@ -35,7 +35,7 @@ export async function validateEligibility(
   buyer: BuyerCriteria
 ): Promise<ValidatedGrant[]> {
   if (matches.length === 0) return [];
-  if (!watsonxConfigured()) return matches;
+  if (!llmConfigured()) return matches;
 
   const items = matches.map((m) => ({
     id: m.grant.id,
@@ -121,8 +121,8 @@ export async function validateOne(
   grant: Grant,
   buyer: BuyerCriteria
 ): Promise<{ verdict: ValidationVerdict; reason: string }> {
-  if (!watsonxConfigured()) {
-    return { verdict: "uncertain", reason: "watsonx.ai not configured — cannot validate." };
+  if (!llmConfigured()) {
+    return { verdict: "uncertain", reason: "LLM provider not configured — cannot validate." };
   }
 
   const prompt = `You are an expert validator for US first-time home buyer grant programs.
