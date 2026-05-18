@@ -81,6 +81,44 @@ paths:
               schema:
                 $ref: '#/components/schemas/GrantList'
 
+  /api/skills/validate-eligibility:
+    post:
+      operationId: validateEligibility
+      summary: Validator agent — second-look eligibility check on a single grant
+      description: |
+        Used by the Nova Eligibility Validator agent. Given a grant ID and a
+        buyer profile, returns "eligible" | "uncertain" | "ineligible" with a
+        one-sentence reason. Catches ambiguous notes (targeted areas, AMI
+        wrinkles, hidden geographic limits) the rule engine can't see.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [grantId, buyer]
+              properties:
+                grantId:
+                  type: string
+                  description: Grant ID returned by matchGrants or listGrants.
+                buyer:
+                  $ref: '#/components/schemas/BuyerProfile'
+      responses:
+        '200':
+          description: Validation verdict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  grantId: { type: string }
+                  grantName: { type: string }
+                  verdict:
+                    type: string
+                    enum: [eligible, uncertain, ineligible]
+                  reason: { type: string }
+
   /api/skills/capture-lead:
     post:
       operationId: captureLead
