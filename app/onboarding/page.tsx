@@ -29,6 +29,10 @@ const PROFESSIONS = [
 ] as const;
 
 type FormState = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
   state: string;
   city: string;
   county: string;
@@ -44,6 +48,10 @@ type FormState = {
 };
 
 const initial: FormState = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
   state: "MI",
   city: "",
   county: "",
@@ -63,16 +71,59 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(initial);
   const [submitting, setSubmitting] = useState(false);
+  const [step0Error, setStep0Error] = useState<string | null>(null);
+  // Captured once Step 0 fires start-lead; kept so future submissions can
+  // link to the same lead row instead of creating duplicates.
+  const [, setLeadId] = useState<string | null>(null);
 
-  const totalSteps = 5;
+  const totalSteps = 6;
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
+  function step0Valid(): boolean {
+    if (!form.firstName.trim()) return false;
+    if (!form.lastName.trim()) return false;
+    if (!/^\S+@\S+\.\S+$/.test(form.email)) return false;
+    // Strip non-digits and require at least 10 digits (US-style).
+    if (form.phone.replace(/\D/g, "").length < 10) return false;
+    return true;
+  }
+
+  async function captureStarterLead() {
+    try {
+      const res = await fetch("/api/skills/start-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: form.firstName.trim(),
+          lastName: form.lastName.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.leadId) setLeadId(data.leadId);
+    } catch (err) {
+      // Don't block the funnel on a network blip — buyer keeps going either way.
+      console.error("start-lead failed", err);
+    }
+  }
+
+  async function advanceFromStep0() {
+    if (!step0Valid()) {
+      setStep0Error("Please fill in all four fields with a valid email and phone.");
+      return;
+    }
+    setStep0Error(null);
+    // Fire-and-forget — don't make the user wait on the email.
+    captureStarterLead();
+    setStep((s) => s + 1);
+  }
+
   async function submit() {
     setSubmitting(true);
-    // Encode criteria into URL — results page reads from query for shareability.
     const params = new URLSearchParams();
     Object.entries(form).forEach(([k, v]) => params.set(k, String(v)));
     router.push(`/results?${params.toString()}`);
@@ -97,6 +148,59 @@ export default function OnboardingPage() {
 
       <div>
         {step === 0 && (
+          <StepShell
+            title="Let's get started."
+            subtitle="So we know where to send your matches. Only Christian (your grant specialist) sees this."
+          >
+            <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+              <Field label="First name">
+                <input
+                  className="input"
+                  autoComplete="given-name"
+                  placeholder="Jane"
+                  value={form.firstName}
+                  onChange={(e) => update("firstName", e.target.value)}
+                />
+              </Field>
+              <Field label="Last name">
+                <input
+                  className="input"
+                  autoComplete="family-name"
+                  placeholder="Doe"
+                  value={form.lastName}
+                  onChange={(e) => update("lastName", e.target.value)}
+                />
+              </Field>
+              <Field label="Email address">
+                <input
+                  className="input"
+                  type="email"
+                  autoComplete="email"
+                  inputMode="email"
+                  placeholder="jane@example.com"
+                  value={form.email}
+                  onChange={(e) => update("email", e.target.value)}
+                />
+              </Field>
+              <Field label="Phone number">
+                <input
+                  className="input"
+                  type="tel"
+                  autoComplete="tel"
+                  inputMode="tel"
+                  placeholder="(555) 555-1212"
+                  value={form.phone}
+                  onChange={(e) => update("phone", e.target.value)}
+                />
+              </Field>
+            </div>
+            {step0Error && (
+              <p className="mt-4 text-sm text-red-600">{step0Error}</p>
+            )}
+          </StepShell>
+        )}
+
+        {step === 1 && (
           <StepShell title="Where are you buying?" subtitle="We'll match you to programs in your state, county, and city.">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="State">
@@ -132,7 +236,7 @@ export default function OnboardingPage() {
           </StepShell>
         )}
 
-        {step === 1 && (
+        {step === 2 && (
           <StepShell title="Tell us about your household" subtitle="This determines income-based eligibility.">
             <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
               <Field label="Household size">
@@ -199,7 +303,7 @@ export default function OnboardingPage() {
           </StepShell>
         )}
 
-        {step === 2 && (
+        {step === 3 && (
           <StepShell title="Are you a first-time buyer?" subtitle="Most DPA programs target first-timers, but many work for repeat buyers too.">
             <div className="flex flex-col gap-3">
               <Choice
@@ -231,7 +335,7 @@ export default function OnboardingPage() {
           </StepShell>
         )}
 
-        {step === 3 && (
+        {step === 4 && (
           <StepShell title="Military or specific profession?" subtitle="These unlock targeted programs with bigger benefits.">
             <div className="grid grid-cols-1 gap-3">
               <Choice
@@ -265,9 +369,11 @@ export default function OnboardingPage() {
           </StepShell>
         )}
 
-        {step === 4 && (
+        {step === 5 && (
           <StepShell title="Ready." subtitle="Review your details. We'll match you in seconds.">
             <dl className="grid grid-cols-1 gap-x-10 sm:grid-cols-2">
+              <Item k="Name" v={`${form.firstName} ${form.lastName}`.trim() || "—"} />
+              <Item k="Contact" v={form.email || "—"} />
               <Item k="Location" v={`${form.city ? form.city + ", " : ""}${form.state}`} />
               <Item k="Household size" v={form.householdSize.toString()} />
               <Item k="Annual income" v={`$${form.annualIncome.toLocaleString()}`} />
@@ -294,7 +400,10 @@ export default function OnboardingPage() {
           {step < totalSteps - 1 ? (
             <button
               type="button"
-              onClick={() => setStep((s) => s + 1)}
+              onClick={() => {
+                if (step === 0) advanceFromStep0();
+                else setStep((s) => s + 1);
+              }}
               className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-[#3457dc] px-8 py-3 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-[#2742b0]"
             >
               Continue
