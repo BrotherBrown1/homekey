@@ -4,6 +4,7 @@
 
 import { NextRequest } from "next/server";
 import { getGrantById } from "@/lib/matcher";
+import { BRAND } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +32,7 @@ async function isAlive(url: string): Promise<boolean> {
       signal: ctrl.signal,
       headers: {
         "user-agent":
-          "Mozilla/5.0 (compatible; Nova-LinkCheck/1.0; +https://homekey-psi.vercel.app)",
+          `Mozilla/5.0 (compatible; ${BRAND.name}-LinkCheck/1.0; +${BRAND.siteUrl})`,
         accept: "text/html",
       },
     });
@@ -62,7 +63,7 @@ export async function GET(
 ) {
   const { id } = await params;
   const grant = await getGrantById(id);
-  if (!grant) return Response.redirect("https://homekey-psi.vercel.app", 302);
+  if (!grant) return Response.redirect(BRAND.siteUrl, 302);
 
   if (await isAlive(grant.applicationUrl)) {
     return Response.redirect(grant.applicationUrl, 302);

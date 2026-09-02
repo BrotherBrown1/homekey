@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { BuyerCriteria } from "@/lib/schema";
+import { ConsentNote } from "@/components/ConsentNote";
 
 export function LeadCaptureBar({
   buyer,
@@ -157,6 +158,7 @@ export function LeadCaptureBar({
         </button>
         {status === "error" && <p className="text-sm text-red-400">{message}</p>}
       </div>
+      <ConsentNote />
     </form>
   );
 }

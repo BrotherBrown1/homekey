@@ -25,7 +25,7 @@ watsonx.ai is the LLM hosting service. Granite is IBM's own foundation model —
 
 1. Go to https://dataplatform.cloud.ibm.com/wx (this is the watsonx.ai console).
 2. If prompted, choose **Dallas (us-south)** region — best Granite availability and free tier.
-3. Click **"Create a new project"** → name it `Nova` → select your account's free instance for storage.
+3. Click **"Create a new project"** → name it `PocketGrants` → select your account's free instance for storage.
 4. Once the project is created, copy two values from the project settings:
    - **Project ID** (looks like `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`)
    - **Region** (e.g., `us-south`)

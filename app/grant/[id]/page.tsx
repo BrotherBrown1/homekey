@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getGrantById } from "@/lib/matcher";
+import { BRAND } from "@/lib/config";
 
 type Params = Promise<{ id: string }>;
 
@@ -15,7 +16,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title,
     description,
-    alternates: { canonical: `https://homekey-psi.vercel.app/grant/${grant.id}` },
+    alternates: { canonical: `${BRAND.siteUrl}/grant/${grant.id}` },
     openGraph: { title, description },
   };
 }

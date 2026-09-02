@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { listActiveGrants } from "@/lib/matcher";
+import { BRAND } from "@/lib/config";
 
-const BASE = "https://homekey-psi.vercel.app";
+const BASE = BRAND.siteUrl;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const today = new Date();
@@ -13,6 +14,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.9,
     },
+    { url: `${BASE}/privacy`, lastModified: today, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${BASE}/terms`, lastModified: today, changeFrequency: "yearly", priority: 0.3 },
   ];
 
   let grantUrls: MetadataRoute.Sitemap = [];

@@ -4,7 +4,7 @@
 
 1. `npm run db:reset` (clean slate)
 2. `npm run dev`
-3. Open Orchestrate playground with **Nova Buyer Advisor** loaded.
+3. Open Orchestrate playground with **PocketGrants Buyer Advisor** loaded.
 4. Open a second tab to `localhost:3000` for the web flow.
 5. Open a third tab to `localhost:3000/admin`.
 6. Have terminal ready to run `npm run curator`.
@@ -14,7 +14,7 @@
 ### Scene 1 — The pitch (0:00–0:25)
 *(camera on you)*
 
-> "Hi, I'm Christian, a real estate agent in Michigan. Every week my clients ask, 'Are there any grants I can use?' The answer is almost always yes — but most people never find them because there are 2,500 programs across federal, state, county, and city governments, and the rules change every quarter. I built Nova for the watsonx hackathon to fix that with two IBM watsonx Orchestrate agents."
+> "Hi, I'm Christian, a real estate agent in Michigan. Every week my clients ask, 'Are there any grants I can use?' The answer is almost always yes — but most people never find them because there are 2,500 programs across federal, state, county, and city governments, and the rules change every quarter. I built PocketGrants for the watsonx hackathon to fix that with two IBM watsonx Orchestrate agents."
 
 ### Scene 2 — Buyer chats with the Orchestrate agent (0:25–1:20)
 *(switch to Orchestrate playground)*
@@ -62,6 +62,6 @@ Click into the pending diff. Show the evidence quoted from the live page.
 ## Loom upload checklist
 
 - [ ] Privacy = "Anyone with the link"
-- [ ] Title: "Nova — IBM watsonx Hackathon Submission"
+- [ ] Title: "PocketGrants — IBM watsonx Hackathon Submission"
 - [ ] Description includes repo link
 - [ ] Copy the share URL into SUBMISSION.md

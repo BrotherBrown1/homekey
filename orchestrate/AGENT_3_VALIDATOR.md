@@ -1,4 +1,4 @@
-# Orchestrate Agent 3 — Nova Eligibility Validator
+# Orchestrate Agent 3 — PocketGrants Eligibility Validator
 
 A second-look agent that re-checks a grant against a specific buyer's profile and returns `eligible`, `uncertain`, or `ineligible` with a one-sentence reason.
 
@@ -30,13 +30,13 @@ Ineligible grants are dropped from buyer results entirely. Uncertain grants are 
 ### 1. Create the agent
 
 1. **Agents** → **+ New agent**
-2. Name: **Nova Eligibility Validator**
+2. Name: **PocketGrants Eligibility Validator**
 3. Type: **Skill / utility** (no conversational UI required, but you can give it one for the demo)
 4. Foundation model: Granite 3 8B Instruct (same as the others)
 5. **System prompt**:
 
 ```
-You are the Nova Eligibility Validator. The Buyer Advisor agent calls you when it needs a second opinion on whether a specific buyer qualifies for a specific grant.
+You are the PocketGrants Eligibility Validator. The Buyer Advisor agent calls you when it needs a second opinion on whether a specific buyer qualifies for a specific grant.
 
 Workflow:
 1. Receive a grantId and a buyer profile.
@@ -56,10 +56,10 @@ Be conservative. When in doubt, return uncertain — never ineligible. Never inv
 
 ### 2. Wire it to the Buyer Advisor
 
-In the Nova Buyer Advisor agent's system prompt, add this line:
+In the PocketGrants Buyer Advisor agent's system prompt, add this line:
 
 ```
-When recommending a specific grant to a buyer, you may call the Nova Eligibility Validator (via validateEligibility) to confirm a borderline case before suggesting it. If the validator returns "ineligible", do not recommend that grant.
+When recommending a specific grant to a buyer, you may call the PocketGrants Eligibility Validator (via validateEligibility) to confirm a borderline case before suggesting it. If the validator returns "ineligible", do not recommend that grant.
 ```
 
 This is the multi-agent loop: Buyer Advisor proposes a match → Validator checks it → Curator keeps the underlying data fresh.

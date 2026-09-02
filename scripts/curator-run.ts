@@ -18,6 +18,7 @@
 
 import { listActiveGrants } from "../lib/matcher";
 import { chatJson, isConfigured } from "../lib/watsonx";
+import { BRAND } from "../lib/config";
 
 const ADMIN_BASE = process.env.HOMEKEY_API_BASE ?? "http://localhost:3000";
 const TOKEN = process.env.CURATOR_AGENT_TOKEN;
@@ -40,7 +41,7 @@ async function fetchSource(url: string): Promise<string> {
   const res = await fetch(url, {
     headers: {
       "User-Agent":
-        "Nova-Curator/1.0 (grant tracker; contact: myrealtorbrown@gmail.com)",
+        `${BRAND.name}-Curator/1.0 (grant tracker; contact: ${BRAND.realtor.email})`,
       Accept: "text/html,application/xhtml+xml",
     },
     redirect: "follow",
