@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BRAND } from "@/lib/config";
 import { CountUp } from "@/components/CountUp";
+import { STATS, CLAIMS, AVERAGE_BENEFIT } from "@/lib/stats";
 
 export default function HomePage() {
   return (
@@ -17,7 +18,7 @@ export default function HomePage() {
       >
         <div className="flex items-center gap-3">
           <span className="inline-flex h-2 w-2 rounded-full bg-[#30d158] shadow-[0_0_0_4px_rgba(48,209,88,0.15)]" />
-          <Eyebrow>Live · 82 programs · all 50 states</Eyebrow>
+          <Eyebrow>Live · {CLAIMS.programs}+ programs · all 50 states</Eyebrow>
         </div>
         <Headline>
           Find the grants that unlock
@@ -35,7 +36,7 @@ export default function HomePage() {
       <FullBleed bg="bg-zinc-950" text="text-white" align="end">
         <Eyebrow tone="dark">The opportunity</Eyebrow>
         <Headline>
-          $<CountUp value={18400} className="tabular-nums" duration={3200} />.
+          $<CountUp value={AVERAGE_BENEFIT} className="tabular-nums" duration={3200} />.
           <br />
           On average, in your name.
         </Headline>
@@ -253,12 +254,14 @@ function Step({ n, title, body }: { n: string; title: string; body: string }) {
   );
 }
 
+// Every figure here is computed from (or asserted against) the shipped
+// grant data in lib/stats.ts, so the copy can never overstate the database.
 function FreshnessStats() {
   const items: Array<{ value: number; suffix?: string; label: string }> = [
-    { value: 12, label: "Federal programs" },
-    { value: 48, suffix: "+", label: "States covered" },
-    { value: 30, suffix: "+", label: "City & county programs" },
-    { value: 7, suffix: " days", label: "Max data age" },
+    { value: STATS.federal, label: "Federal programs" },
+    { value: CLAIMS.states, suffix: "+", label: "States covered" },
+    { value: STATS.local, label: "City & county programs" },
+    { value: STATS.maxDataAgeDays, suffix: " days", label: "Max data age" },
   ];
   return (
     <div className="mt-12 grid w-full max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-3xl bg-white/10 sm:grid-cols-4">

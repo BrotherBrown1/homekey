@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: ApplyParams }): Pro
   return {
     title,
     description,
-    alternates: { canonical: `https://homekey-psi.vercel.app/apply/${grant.id}` },
+    alternates: { canonical: `${BRAND.siteUrl}/apply/${grant.id}` },
     openGraph: { title, description },
   };
 }

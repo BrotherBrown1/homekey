@@ -10,6 +10,7 @@ import { listActiveGrants } from "@/lib/matcher";
 import { chatJson, isConfigured } from "@/lib/watsonx";
 import { db, schema } from "@/lib/db";
 import { randomUUID } from "node:crypto";
+import { BRAND } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -31,7 +32,7 @@ async function checkGrant(grant: Awaited<ReturnType<typeof listActiveGrants>>[nu
     redirect: "follow",
     headers: {
       "user-agent":
-        "Nova-Curator/1.0 (Vercel Cron; contact: myrealtorbrown@gmail.com)",
+        `${BRAND.name}-Curator/1.0 (Vercel Cron; contact: ${BRAND.realtor.email})`,
       accept: "text/html",
     },
   });

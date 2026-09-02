@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ConsentNote } from "@/components/ConsentNote";
 
 export function ApplyLeadForm({
   grantId,
@@ -125,6 +126,7 @@ export function ApplyLeadForm({
         {status === "submitting" ? "Sending…" : "Start my grant application →"}
       </button>
       {status === "error" && <p className="text-sm text-red-400">{message}</p>}
+      <ConsentNote />
     </form>
   );
 }

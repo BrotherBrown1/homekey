@@ -100,7 +100,15 @@ export default async function ResultsPage({
         )}
       </div>
 
-      <LeadCaptureBar buyer={buyer} matchedIds={matches.map((m) => m.grant.id)} />
+      {params.saved === "1" ? (
+        <div className="mt-10 border-y border-emerald-200 bg-emerald-50 px-6 py-5">
+          <p className="text-sm font-medium text-emerald-900">
+            ✓ Your matches are saved. New programs in your area will arrive weekly.
+          </p>
+        </div>
+      ) : (
+        <LeadCaptureBar buyer={buyer} matchedIds={matches.map((m) => m.grant.id)} />
+      )}
 
       <div
         role="tablist"

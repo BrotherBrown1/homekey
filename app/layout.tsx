@@ -3,7 +3,7 @@ import Link from "next/link";
 import { BRAND } from "@/lib/config";
 import "./globals.css";
 
-const SITE_URL = "https://homekey-psi.vercel.app";
+const SITE_URL = BRAND.siteUrl;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -138,7 +138,7 @@ export default function RootLayout({
         </header>
         <main className="flex-1">{children}</main>
         <footer className="border-t border-zinc-200 bg-white">
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-16 sm:grid-cols-2">
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-16 sm:grid-cols-3">
             <div>
               <p
                 style={{
@@ -161,22 +161,54 @@ export default function RootLayout({
               <p className="mt-3 font-medium text-zinc-950">
                 {BRAND.realtor.name}
               </p>
+              <p className="mt-1 text-zinc-600">
+                Licensed Real Estate Salesperson, {BRAND.realtor.licenseState}
+              </p>
+              <p className="text-zinc-600">
+                License #{BRAND.realtor.licenseNumber} · {BRAND.realtor.brokerage}
+              </p>
               <a
                 href={`mailto:${BRAND.realtor.email}`}
-                className="mt-1 inline-block text-zinc-950 underline-offset-4 hover:underline"
+                className="mt-2 inline-block text-zinc-950 underline-offset-4 hover:underline"
               >
                 {BRAND.realtor.email}
               </a>
             </div>
+            <div className="text-sm">
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
+                Legal
+              </p>
+              <ul className="mt-3 space-y-2">
+                <li>
+                  <Link href="/privacy" className="text-zinc-950 underline-offset-4 hover:underline">
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/terms" className="text-zinc-950 underline-offset-4 hover:underline">
+                    Terms of Service
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
           <div className="border-t border-zinc-200">
-            <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-3 px-6 py-6 text-xs text-zinc-500 sm:flex-row sm:items-center">
+            <div className="mx-auto max-w-6xl space-y-3 px-6 py-6 text-xs leading-relaxed text-zinc-500">
               <p>
-                © {new Date().getFullYear()} {BRAND.name}. All rights reserved.
+                {BRAND.name} is not a lender, government agency, or housing
+                authority and is not affiliated with any program listed. Program
+                information is provided for general guidance only and is not a
+                commitment to lend, a determination of eligibility, or a
+                guarantee of funding. Confirm all details with the official
+                program administrator before applying.
               </p>
               <p>
-                Information shown is for guidance only. Confirm eligibility with
-                the official program administrator before applying.
+                {BRAND.realtor.name} is a licensed real estate salesperson in{" "}
+                {BRAND.realtor.licenseState} (License #{BRAND.realtor.licenseNumber})
+                with {BRAND.realtor.brokerage}. Equal Housing Opportunity.
+              </p>
+              <p>
+                © {new Date().getFullYear()} {BRAND.name}. All rights reserved.
               </p>
             </div>
           </div>

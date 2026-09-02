@@ -2,6 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import type { BuyerCriteria } from "@/lib/schema";
+import { ConsentNote } from "@/components/ConsentNote";
+import { BRAND } from "@/lib/config";
+
+const REALTOR_FIRST_NAME = BRAND.realtor.name.split(" ")[0];
 
 const US_STATES = [
   ["AL","Alabama"],["AK","Alaska"],["AZ","Arizona"],["AR","Arkansas"],["CA","California"],
@@ -66,23 +71,48 @@ const initial: FormState = {
   ownerOccupied: true,
 };
 
+// Flow: qualification questions first (steps 0-3), then a teaser with the
+// real number of programs the buyer matched, and only then the contact
+// details that unlock the results. Contact info is POSTed to the lead API
+// and never placed in the results URL.
+const CONTACT_STEP = 4;
+const TOTAL_STEPS = 5;
+
+function toCriteria(form: FormState): BuyerCriteria {
+  return {
+    state: form.state,
+    city: form.city.trim() || undefined,
+    county: form.county.trim() || undefined,
+    householdSize: form.householdSize,
+    annualIncome: form.annualIncome,
+    targetPurchasePrice: form.targetPurchasePrice || undefined,
+    creditScore: form.creditScore || undefined,
+    firstTimeBuyer: form.firstTimeBuyer,
+    veteran: form.veteran,
+    activeMilitary: form.activeMilitary,
+    profession: form.profession || undefined,
+    ownerOccupied: form.ownerOccupied,
+  };
+}
+
 export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(initial);
   const [submitting, setSubmitting] = useState(false);
-  const [step0Error, setStep0Error] = useState<string | null>(null);
-  // Captured once Step 0 fires start-lead; kept so future submissions can
-  // link to the same lead row instead of creating duplicates.
-  const [, setLeadId] = useState<string | null>(null);
+  const [contactError, setContactError] = useState<string | null>(null);
+  const [wantsRealtor, setWantsRealtor] = useState(false);
+  // Teaser shown on the contact step: how many programs the profile matched.
+  const [preview, setPreview] = useState<{ count: number; ids: string[] } | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
 
-  const totalSteps = 6;
+  const totalSteps = TOTAL_STEPS;
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  function step0Valid(): boolean {
+  function contactValid(): boolean {
     if (!form.firstName.trim()) return false;
     if (!form.lastName.trim()) return false;
     if (!/^\S+@\S+\.\S+$/.test(form.email)) return false;
@@ -91,9 +121,54 @@ export default function OnboardingPage() {
     return true;
   }
 
-  async function captureStarterLead() {
+  // Runs the real matcher (no AI, so it's instant) so the teaser number is
+  // the same one the results page will show.
+  async function loadPreview() {
+    setPreviewLoading(true);
     try {
-      const res = await fetch("/api/skills/start-lead", {
+      const res = await fetch("/api/skills/match-grants", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...toCriteria(form), useAi: false, limit: 50 }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPreview({
+          count: data.count,
+          ids: (data.matches as Array<{ id: string }>).map((m) => m.id),
+        });
+      }
+    } catch (err) {
+      // Teaser is a nice-to-have; the contact step still works without it.
+      console.error("match preview failed", err);
+    } finally {
+      setPreviewLoading(false);
+    }
+  }
+
+  function next() {
+    const nextStep = step + 1;
+    if (nextStep === CONTACT_STEP) {
+      setPreview(null);
+      loadPreview();
+    }
+    setStep(nextStep);
+  }
+
+  async function submit() {
+    if (!contactValid()) {
+      setContactError("Please fill in all four fields with a valid email and phone.");
+      return;
+    }
+    setContactError(null);
+    setSubmitting(true);
+
+    const criteria = toCriteria(form);
+
+    // Save the lead with the full profile + matches. A network blip must not
+    // strand the buyer, so failures are logged and the funnel continues.
+    try {
+      await fetch("/api/skills/capture-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -101,31 +176,23 @@ export default function OnboardingPage() {
           lastName: form.lastName.trim(),
           email: form.email.trim(),
           phone: form.phone.trim(),
+          state: criteria.state,
+          criteria,
+          matchedGrantIds: preview?.ids ?? [],
+          wantsRealtor,
+          wantsDigest: true,
         }),
       });
-      const data = await res.json();
-      if (data.success && data.leadId) setLeadId(data.leadId);
     } catch (err) {
-      // Don't block the funnel on a network blip — buyer keeps going either way.
-      console.error("start-lead failed", err);
+      console.error("capture-lead failed", err);
     }
-  }
 
-  async function advanceFromStep0() {
-    if (!step0Valid()) {
-      setStep0Error("Please fill in all four fields with a valid email and phone.");
-      return;
-    }
-    setStep0Error(null);
-    // Fire-and-forget — don't make the user wait on the email.
-    captureStarterLead();
-    setStep((s) => s + 1);
-  }
-
-  async function submit() {
-    setSubmitting(true);
+    // Only matching criteria go in the URL — never name, email, or phone.
     const params = new URLSearchParams();
-    Object.entries(form).forEach(([k, v]) => params.set(k, String(v)));
+    Object.entries(criteria).forEach(([k, v]) => {
+      if (v !== undefined && v !== "") params.set(k, String(v));
+    });
+    params.set("saved", "1");
     router.push(`/results?${params.toString()}`);
   }
 
@@ -148,59 +215,6 @@ export default function OnboardingPage() {
 
       <div>
         {step === 0 && (
-          <StepShell
-            title="Let's get started."
-            subtitle="So we know where to send your matches. Only Christian (your grant specialist) sees this."
-          >
-            <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-              <Field label="First name">
-                <input
-                  className="input"
-                  autoComplete="given-name"
-                  placeholder="Jane"
-                  value={form.firstName}
-                  onChange={(e) => update("firstName", e.target.value)}
-                />
-              </Field>
-              <Field label="Last name">
-                <input
-                  className="input"
-                  autoComplete="family-name"
-                  placeholder="Doe"
-                  value={form.lastName}
-                  onChange={(e) => update("lastName", e.target.value)}
-                />
-              </Field>
-              <Field label="Email address">
-                <input
-                  className="input"
-                  type="email"
-                  autoComplete="email"
-                  inputMode="email"
-                  placeholder="jane@example.com"
-                  value={form.email}
-                  onChange={(e) => update("email", e.target.value)}
-                />
-              </Field>
-              <Field label="Phone number">
-                <input
-                  className="input"
-                  type="tel"
-                  autoComplete="tel"
-                  inputMode="tel"
-                  placeholder="(555) 555-1212"
-                  value={form.phone}
-                  onChange={(e) => update("phone", e.target.value)}
-                />
-              </Field>
-            </div>
-            {step0Error && (
-              <p className="mt-4 text-sm text-red-600">{step0Error}</p>
-            )}
-          </StepShell>
-        )}
-
-        {step === 1 && (
           <StepShell title="Where are you buying?" subtitle="We'll match you to programs in your state, county, and city.">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="State">
@@ -236,7 +250,7 @@ export default function OnboardingPage() {
           </StepShell>
         )}
 
-        {step === 2 && (
+        {step === 1 && (
           <StepShell title="Tell us about your household" subtitle="This determines income-based eligibility.">
             <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
               <Field label="Household size">
@@ -303,7 +317,7 @@ export default function OnboardingPage() {
           </StepShell>
         )}
 
-        {step === 3 && (
+        {step === 2 && (
           <StepShell title="Are you a first-time buyer?" subtitle="Most DPA programs target first-timers, but many work for repeat buyers too.">
             <div className="flex flex-col gap-3">
               <Choice
@@ -335,7 +349,7 @@ export default function OnboardingPage() {
           </StepShell>
         )}
 
-        {step === 4 && (
+        {step === 3 && (
           <StepShell title="Military or specific profession?" subtitle="These unlock targeted programs with bigger benefits.">
             <div className="grid grid-cols-1 gap-3">
               <Choice
@@ -369,20 +383,78 @@ export default function OnboardingPage() {
           </StepShell>
         )}
 
-        {step === 5 && (
-          <StepShell title="Ready." subtitle="Review your details. We'll match you in seconds.">
-            <dl className="grid grid-cols-1 gap-x-10 sm:grid-cols-2">
-              <Item k="Name" v={`${form.firstName} ${form.lastName}`.trim() || "—"} />
-              <Item k="Contact" v={form.email || "—"} />
+        {step === CONTACT_STEP && (
+          <StepShell
+            title={
+              previewLoading
+                ? "Checking programs…"
+                : preview
+                  ? `We found ${preview.count} program${preview.count === 1 ? "" : "s"} you may qualify for.`
+                  : "Your matches are ready."
+            }
+            subtitle={`Tell us where to send them. Only ${REALTOR_FIRST_NAME} (your grant specialist) sees this.`}
+          >
+            <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+              <Field label="First name">
+                <input
+                  className="input"
+                  autoComplete="given-name"
+                  placeholder="Jane"
+                  value={form.firstName}
+                  onChange={(e) => update("firstName", e.target.value)}
+                />
+              </Field>
+              <Field label="Last name">
+                <input
+                  className="input"
+                  autoComplete="family-name"
+                  placeholder="Doe"
+                  value={form.lastName}
+                  onChange={(e) => update("lastName", e.target.value)}
+                />
+              </Field>
+              <Field label="Email address">
+                <input
+                  className="input"
+                  type="email"
+                  autoComplete="email"
+                  inputMode="email"
+                  placeholder="jane@example.com"
+                  value={form.email}
+                  onChange={(e) => update("email", e.target.value)}
+                />
+              </Field>
+              <Field label="Phone number">
+                <input
+                  className="input"
+                  type="tel"
+                  autoComplete="tel"
+                  inputMode="tel"
+                  placeholder="(555) 555-1212"
+                  value={form.phone}
+                  onChange={(e) => update("phone", e.target.value)}
+                />
+              </Field>
+            </div>
+            <label className="mt-8 flex items-center gap-3 text-sm text-zinc-700">
+              <input
+                type="checkbox"
+                checked={wantsRealtor}
+                onChange={(e) => setWantsRealtor(e.target.checked)}
+                style={{ accentColor: "#30d158" }}
+                className="h-4 w-4"
+              />
+              Have a grant specialist contact me to help me apply
+            </label>
+            <dl className="mt-8 grid grid-cols-2 gap-x-6 border-t border-zinc-200 pt-2 sm:grid-cols-4">
               <Item k="Location" v={`${form.city ? form.city + ", " : ""}${form.state}`} />
-              <Item k="Household size" v={form.householdSize.toString()} />
-              <Item k="Annual income" v={`$${form.annualIncome.toLocaleString()}`} />
+              <Item k="Income" v={`$${form.annualIncome.toLocaleString()}`} />
               <Item k="Target price" v={`$${form.targetPurchasePrice.toLocaleString()}`} />
-              <Item k="Credit score" v={form.creditScore.toString()} />
               <Item k="First-time buyer" v={form.firstTimeBuyer ? "Yes" : "No"} />
-              <Item k="Veteran" v={form.veteran ? "Yes" : "No"} />
-              <Item k="Profession" v={form.profession || "—"} />
             </dl>
+            {contactError && (
+              <p className="mt-4 text-sm text-red-600">{contactError}</p>
+            )}
           </StepShell>
         )}
 
@@ -400,10 +472,7 @@ export default function OnboardingPage() {
           {step < totalSteps - 1 ? (
             <button
               type="button"
-              onClick={() => {
-                if (step === 0) advanceFromStep0();
-                else setStep((s) => s + 1);
-              }}
+              onClick={next}
               className="inline-flex min-w-[180px] items-center justify-center rounded-full bg-[#3457dc] px-8 py-3 text-xs font-medium uppercase tracking-[0.12em] text-white transition hover:bg-[#2742b0]"
             >
               Continue
@@ -419,6 +488,7 @@ export default function OnboardingPage() {
             </button>
           )}
         </div>
+        {step === CONTACT_STEP && <ConsentNote tone="light" />}
       </div>
 
       <style>{`
