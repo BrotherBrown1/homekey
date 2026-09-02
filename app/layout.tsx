@@ -116,12 +116,12 @@ export default function RootLayout({
                 fontFamily:
                   '"SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif',
               }}
-              className="text-[17px] font-semibold uppercase leading-none tracking-[0.34em] text-zinc-950"
+              className="text-[15px] font-semibold uppercase leading-none tracking-[0.2em] text-zinc-950 sm:text-[17px] sm:tracking-[0.34em]"
             >
               {BRAND.name.toUpperCase()}
             </Link>
             <nav className="flex items-center gap-7 text-xs uppercase tracking-[0.12em] text-zinc-600">
-              <Link href="/onboarding" className="hover:text-zinc-950">
+              <Link href="/onboarding" className="hidden hover:text-zinc-950 sm:inline">
                 Find my grants
               </Link>
               <Link href="/#how" className="hidden hover:text-zinc-950 sm:inline">
@@ -145,7 +145,7 @@ export default function RootLayout({
                   fontFamily:
                     '"SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif',
                 }}
-                className="text-[19px] font-semibold uppercase tracking-[0.34em] text-zinc-950"
+                className="text-[19px] font-semibold uppercase tracking-[0.2em] text-zinc-950 sm:tracking-[0.34em]"
               >
                 {BRAND.name.toUpperCase()}
               </p>

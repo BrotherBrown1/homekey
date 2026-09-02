@@ -1,7 +1,7 @@
 // Single source of truth for brand + contact info.
 // Rename here to rebrand the entire app.
 export const BRAND = {
-  name: "Nova",
+  name: "PocketGrants",
   siteUrl: "https://homekey-psi.vercel.app",
   tagline: "Find the grants that unlock your first home",
   description:

@@ -1,9 +1,9 @@
-# Nova — Find the grants that unlock your first home
+# PocketGrants — Find the grants that unlock your first home
 
 A buyer-facing grant-matching app powered by two **IBM watsonx Orchestrate** agents and the **watsonx.ai** Granite foundation model.
 
-- **Nova Buyer Advisor** (conversational): interviews a buyer, calls our REST skills API, returns ranked matches with personalized "why you qualify" reasoning.
-- **Nova Curator** (scheduled): scrapes every housing-finance-agency source URL weekly, uses watsonx.ai to detect material changes, and queues diffs for human review at `/admin`.
+- **PocketGrants Buyer Advisor** (conversational): interviews a buyer, calls our REST skills API, returns ranked matches with personalized "why you qualify" reasoning.
+- **PocketGrants Curator** (scheduled): scrapes every housing-finance-agency source URL weekly, uses watsonx.ai to detect material changes, and queues diffs for human review at `/admin`.
 
 Built for the IBM watsonx hackathon. A free community resource for first-time home buyers — every federal, state, county, and city down-payment and closing-cost grant they qualify for, in one place, kept current by an autonomous agent.
 
@@ -23,7 +23,7 @@ Built for the IBM watsonx hackathon. A free community resource for first-time ho
 
 ```
 ┌────────────────────┐         ┌─────────────────────────────────────┐
-│ watsonx Orchestrate│         │  Nova Next.js app (this repo)    │
+│ watsonx Orchestrate│         │  PocketGrants Next.js app (this repo)    │
 │                    │         │                                     │
 │  Buyer Advisor ────┼────────►│  /api/skills/match-grants           │
 │  (chat agent)      │         │  /api/skills/get-grant              │
@@ -106,7 +106,7 @@ app/                     Next.js app router
 components/
   LeadCaptureBar.tsx     Soft email capture on results
 lib/
-  config.ts              Brand constants (rename Nova here)
+  config.ts              Brand constants (rename PocketGrants here)
   schema.ts              Drizzle tables + types
   db.ts                  SQLite connection
   watsonx.ts             watsonx.ai chat client
