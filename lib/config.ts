@@ -2,7 +2,7 @@
 // Rename here to rebrand the entire app.
 export const BRAND = {
   name: "PocketGrants",
-  siteUrl: "https://homekey-psi.vercel.app",
+  siteUrl: "https://www.mypocketgrants.com",
   tagline: "Find the grants that unlock your first home",
   description:
     "Free grant-matching for first-time home buyers. Federal, state, county, and city programs — updated weekly so the money you qualify for never slips through.",
