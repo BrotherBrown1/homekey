@@ -45,6 +45,7 @@ function amiLimitFor(g: Grant, buyer: BuyerCriteria, geo: Geo): number | null {
  */
 function prefilter(grants: Grant[], buyer: BuyerCriteria, geo: Geo): Grant[] {
   return grants.filter((g) => {
+    const e0 = g.eligibility;
     // Geography
     if (g.level === "state" && g.state !== buyer.state) return false;
     if (g.level === "county" && g.state !== buyer.state) return false;
@@ -62,6 +63,15 @@ function prefilter(grants: Grant[], buyer: BuyerCriteria, geo: Geo): Grant[] {
       g.city &&
       geo.city &&
       normalizeCity(g.city)?.toLowerCase() !== geo.city.toLowerCase()
+    ) {
+      return false;
+    }
+
+    // Some county programs carve out cities that run their own program.
+    if (
+      e0.excludedCities &&
+      geo.city &&
+      e0.excludedCities.some((c) => normalizeCity(c)?.toLowerCase() === geo.city!.toLowerCase())
     ) {
       return false;
     }
