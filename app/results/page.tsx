@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { matchGrants } from "@/lib/matcher";
+import { matchGrants, describeLocation } from "@/lib/matcher";
 import type { BuyerCriteria } from "@/lib/schema";
 import { LeadCaptureBar } from "@/components/LeadCaptureBar";
 
@@ -33,6 +33,7 @@ export default async function ResultsPage({
 }) {
   const params = await searchParams;
   const buyer = parseBuyer(params);
+  const where = describeLocation(buyer);
   const rawMatches = await matchGrants(buyer, { useAi: false, limit: 20 });
 
   // Sort: best matches first (Optimal > Great > Good), then within each tier
@@ -86,7 +87,10 @@ export default async function ResultsPage({
           <span className="text-zinc-500">{loanMatches.length} loan programs.</span>
           <br className="hidden sm:block" />
           <span className="text-zinc-500">
-            {" "}{buyer.city ? `${buyer.city}, ` : ""}{buyer.state}.
+            {" "}
+            {where.city ? `${where.city}, ` : ""}
+            {where.county && where.county !== where.city ? `${where.county} County, ` : ""}
+            {where.state}.
           </span>
         </h1>
         {totalAmount > 0 && (

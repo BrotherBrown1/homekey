@@ -2,6 +2,8 @@ import { eq, or, and, inArray, isNull } from "drizzle-orm";
 import { db, schema, ensureSeeded } from "./db";
 import type { BuyerCriteria, Grant } from "./schema";
 import { chatJson, isConfigured as llmConfigured } from "./llm";
+import { resolveLocation, normalizeCounty, normalizeCity } from "./geo/locations";
+import { lookupAmi, amiIncomeLimit, AMI_DATA_YEAR, type AmiLookup } from "./geo/ami";
 
 export type MatchedGrant = {
   grant: Grant;
@@ -13,18 +15,35 @@ export type MatchedGrant = {
   confidence: "high" | "medium" | "low";
 };
 
-// Generous national upper bound for AMI-based programs. The highest county
-// AMI in the US (~$160K for a family of 4 in the Bay Area) at 140% caps
-// around $225K. $300K is a safe ceiling: anyone above this is not the
-// target population for AMI-gated down-payment assistance.
+// Generous national upper bound for AMI-based programs, used only when we
+// have no AMI figure for the buyer's state at all.
 const AMI_PROGRAM_INCOME_CEILING = 300_000;
+
+// Our AMI table is transcribed from HUD and accurate to roughly ±10%, so a
+// buyer is only hard-excluded when clearly over the limit, and anyone near
+// the line is told to confirm with the program.
+const AMI_HARD_EXCLUDE_FACTOR = 1.15; // income > 115% of the limit → out
+const AMI_COMFORT_FACTOR = 0.9; // income < 90% of the limit → clearly under
+
+type Geo = {
+  county?: string;
+  city?: string;
+  countyInferred: boolean;
+  ami: AmiLookup | null;
+};
+
+function amiLimitFor(g: Grant, buyer: BuyerCriteria, geo: Geo): number | null {
+  const e = g.eligibility;
+  if (typeof e.maxIncomeAmiPct !== "number" || !geo.ami) return null;
+  return amiIncomeLimit(geo.ami, e.maxIncomeAmiPct, buyer.householdSize);
+}
 
 /**
  * Pre-filter grants by hard geographic + eligibility rules.
  * Definitive disqualifiers exclude the grant entirely — there's no value
  * in showing someone a program they categorically cannot get.
  */
-function prefilter(grants: Grant[], buyer: BuyerCriteria): Grant[] {
+function prefilter(grants: Grant[], buyer: BuyerCriteria, geo: Geo): Grant[] {
   return grants.filter((g) => {
     // Geography
     if (g.level === "state" && g.state !== buyer.state) return false;
@@ -32,8 +51,8 @@ function prefilter(grants: Grant[], buyer: BuyerCriteria): Grant[] {
     if (
       g.level === "county" &&
       g.county &&
-      buyer.county &&
-      g.county.toLowerCase() !== buyer.county.toLowerCase()
+      geo.county &&
+      normalizeCounty(g.county)?.toLowerCase() !== geo.county.toLowerCase()
     ) {
       return false;
     }
@@ -41,8 +60,8 @@ function prefilter(grants: Grant[], buyer: BuyerCriteria): Grant[] {
     if (
       g.level === "city" &&
       g.city &&
-      buyer.city &&
-      g.city.toLowerCase() !== buyer.city.toLowerCase()
+      geo.city &&
+      normalizeCity(g.city)?.toLowerCase() !== geo.city.toLowerCase()
     ) {
       return false;
     }
@@ -66,14 +85,15 @@ function prefilter(grants: Grant[], buyer: BuyerCriteria): Grant[] {
     if (typeof e.maxIncome === "number" && buyer.annualIncome > e.maxIncome) {
       return false;
     }
-    // AMI-gated programs: if no absolute cap is set but an AMI percentage is,
-    // exclude buyers who clearly blow past any plausible AMI ceiling.
-    if (
-      typeof e.maxIncomeAmiPct === "number" &&
-      typeof e.maxIncome !== "number" &&
-      buyer.annualIncome > AMI_PROGRAM_INCOME_CEILING
-    ) {
-      return false;
+    // AMI-gated programs: compute the real limit for the buyer's county and
+    // household size, and exclude buyers who are clearly over it.
+    if (typeof e.maxIncomeAmiPct === "number" && typeof e.maxIncome !== "number") {
+      const limit = amiLimitFor(g, buyer, geo);
+      if (limit !== null) {
+        if (buyer.annualIncome > limit * AMI_HARD_EXCLUDE_FACTOR) return false;
+      } else if (buyer.annualIncome > AMI_PROGRAM_INCOME_CEILING) {
+        return false;
+      }
     }
 
     return true;
@@ -84,7 +104,7 @@ function prefilter(grants: Grant[], buyer: BuyerCriteria): Grant[] {
  * Score a single grant against buyer criteria using deterministic rules.
  * Returns 0-100 and lists of qualifying + disqualifying reasons.
  */
-function ruleScore(grant: Grant, buyer: BuyerCriteria): {
+function ruleScore(grant: Grant, buyer: BuyerCriteria, geo: Geo): {
   score: number;
   qualify: string[];
   disqualify: string[];
@@ -124,12 +144,27 @@ function ruleScore(grant: Grant, buyer: BuyerCriteria): {
     qualify.push(`Income under $${e.maxIncome.toLocaleString()} cap.`);
     score += 10;
   } else if (typeof e.maxIncomeAmiPct === "number") {
-    // AMI-gated. Prefilter has already capped runaway incomes. Surface the
-    // rule so the buyer can sanity-check it for their county, but don't score
-    // for or against — that's the Validator's job.
-    qualify.push(
-      `Income limit is ${e.maxIncomeAmiPct}% of Area Median Income for your county.`
-    );
+    // AMI-gated. Prefilter already removed buyers clearly over the limit.
+    const limit = amiLimitFor(grant, buyer, geo);
+    if (limit === null) {
+      qualify.push(
+        `Income limit is ${e.maxIncomeAmiPct}% of Area Median Income for your county.`
+      );
+    } else {
+      const where = geo.ami!.precision === "metro"
+        ? `${geo.county} County`
+        : `${buyer.state} (statewide estimate)`;
+      const limitText = `$${limit.toLocaleString()} (${e.maxIncomeAmiPct}% of area median income, ${where}, household of ${buyer.householdSize})`;
+      if (buyer.annualIncome <= limit * AMI_COMFORT_FACTOR) {
+        qualify.push(`Income of $${buyer.annualIncome.toLocaleString()} is under the ~${limitText} limit.`);
+        score += 10;
+      } else {
+        disqualify.push(
+          `Income of $${buyer.annualIncome.toLocaleString()} is close to the ~${limitText} limit. Confirm the exact ${AMI_DATA_YEAR} figure with the program.`
+        );
+        score -= 15;
+      }
+    }
   }
 
   // Credit score — soft. Many buyers don't know their exact score, so this
@@ -236,6 +271,17 @@ export async function matchGrants(
   const validate = options.validate !== false; // default true
   const limit = options.limit ?? 30;
 
+  // 0. Recognize the buyer's location: normalize what they typed, infer the
+  //    county from the city if it was left blank, and look up the area
+  //    median income for that county.
+  const loc = resolveLocation(buyer);
+  const geo: Geo = {
+    county: loc.county,
+    city: loc.city,
+    countyInferred: loc.countyInferred,
+    ami: lookupAmi(loc.state, loc.county),
+  };
+
   // 1. Load all candidate grants (federal + buyer's state + their county + their city)
   const candidates = await db
     .select()
@@ -250,11 +296,11 @@ export async function matchGrants(
     );
 
   // 2. Pre-filter
-  const filtered = prefilter(candidates, buyer);
+  const filtered = prefilter(candidates, buyer, geo);
 
   // 3. Rule score
   const ruleScored = filtered.map((g) => {
-    const { score, qualify, disqualify } = ruleScore(g, buyer);
+    const { score, qualify, disqualify } = ruleScore(g, buyer, geo);
     return { grant: g, ruleScore: score, whyQualify: qualify, whyDisqualify: disqualify };
   });
 
@@ -308,4 +354,10 @@ export async function getGrantById(id: string): Promise<Grant | null> {
 export async function listActiveGrants(): Promise<Grant[]> {
   await ensureSeeded();
   return db.select().from(schema.grants).where(eq(schema.grants.status, "active"));
+}
+
+/** Resolved location + AMI for display (results heading, admin). */
+export function describeLocation(buyer: BuyerCriteria) {
+  const loc = resolveLocation(buyer);
+  return { ...loc, ami: lookupAmi(loc.state, loc.county) };
 }
