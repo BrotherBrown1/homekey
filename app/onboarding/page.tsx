@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { BuyerCriteria } from "@/lib/schema";
 import { ConsentNote } from "@/components/ConsentNote";
 import { BRAND } from "@/lib/config";
+import { countyForCity } from "@/lib/geo/locations";
 
 const REALTOR_FIRST_NAME = BRAND.realtor.name.split(" ")[0];
 
@@ -107,6 +108,9 @@ export default function OnboardingPage() {
   const [previewLoading, setPreviewLoading] = useState(false);
 
   const totalSteps = TOTAL_STEPS;
+  // County recognizer: if the buyer names a city we know, show which county
+  // the matcher will use so they don't have to look it up.
+  const detectedCounty = countyForCity(form.state, form.city);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -241,10 +245,15 @@ export default function OnboardingPage() {
               <Field label="County (optional)">
                 <input
                   className="input"
-                  placeholder="e.g., Wayne"
+                  placeholder={detectedCounty ? `${detectedCounty} (detected from city)` : "e.g., Wayne"}
                   value={form.county}
                   onChange={(e) => update("county", e.target.value)}
                 />
+                {detectedCounty && !form.county && (
+                  <span className="mt-2 block text-xs text-zinc-500">
+                    We&apos;ll use {detectedCounty} County for {form.city.trim()}. Type a county to override.
+                  </span>
+                )}
               </Field>
             </div>
           </StepShell>
