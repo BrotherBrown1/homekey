@@ -51,6 +51,7 @@ export type EligibilityRules = {
   homebuyerEducationRequired?: boolean;
   propertyTypes?: string[];    // ["single_family", "condo", "manufactured"]
   targetAreasOnly?: boolean;   // limited to specific neighborhoods
+  excludedCities?: string[];   // cities inside the program's area that run their own program instead
   notes?: string;              // anything else
 };
 
