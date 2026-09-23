@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
+import { BRAND } from "@/lib/config";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
-import { db, schema } from "@/lib/db";
+import { saveLead } from "@/lib/leads-store";
 import { notifyLead } from "@/lib/notify";
 
 const leadSchema = z.object({
@@ -23,20 +24,29 @@ export async function POST(request: NextRequest) {
     const data = leadSchema.parse(body);
 
     const id = randomUUID();
-    await db.insert(schema.leads).values({
-      id,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      phone: data.phone,
-      zip: data.zip ?? null,
-      state: data.state?.toUpperCase() ?? null,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      criteria: data.criteria as any,
-      matchedGrantIds: data.matchedGrantIds,
-      wantsRealtor: data.wantsRealtor,
-      wantsDigest: data.wantsDigest,
-    });
+
+    // Persist first, but never let a storage failure lose the lead: the
+    // email below is an independent durable record, so we only report a
+    // failure to the buyer if BOTH channels fail.
+    let stored = true;
+    try {
+      await saveLead({
+        id,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        zip: data.zip ?? null,
+        state: data.state?.toUpperCase() ?? null,
+        criteria: data.criteria,
+        matchedGrantIds: data.matchedGrantIds,
+        wantsRealtor: data.wantsRealtor,
+        wantsDigest: data.wantsDigest,
+      });
+    } catch (e) {
+      stored = false;
+      console.error("[capture-lead] storage failed for lead", id, e);
+    }
 
     // Awaited on purpose: a promise left pending after the response is sent
     // is not guaranteed to run on serverless, and the email is currently the
@@ -54,6 +64,23 @@ export async function POST(request: NextRequest) {
     });
     if (!notified.ok) {
       console.error("[capture-lead] lead", id, "was not emailed:", notified.reason);
+    }
+
+    if (!stored && !notified.ok) {
+      // Both the database and the email failed. Tell the buyer plainly
+      // rather than pretending we captured them.
+      console.error("[capture-lead] LEAD LOST", id, JSON.stringify(data));
+      return Response.json(
+        {
+          success: false,
+          error: "not_captured",
+          message:
+            "We couldn't save your details just now. Please email " +
+            BRAND.realtor.email +
+            " and we'll pick this up straight away.",
+        },
+        { status: 503 }
+      );
     }
 
     return Response.json({

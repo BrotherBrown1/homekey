@@ -1,6 +1,7 @@
 import { db, schema, ensureSeeded } from "@/lib/db";
 import { desc, eq } from "drizzle-orm";
 import { isConfigured as llmConfigured, activeProvider } from "@/lib/llm";
+import { listRecentLeads, leadBackend, leadsAreDurable } from "@/lib/leads-store";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,7 @@ export default async function AdminPage() {
       .where(eq(schema.updateLog.status, "pending"))
       .orderBy(desc(schema.updateLog.runAt))
       .limit(50),
-    db.select().from(schema.leads).orderBy(desc(schema.leads.createdAt)).limit(20),
+    listRecentLeads(20),
   ]);
 
   const grantsByLevel = grants.reduce<Record<string, number>>((acc, g) => {
@@ -37,10 +38,13 @@ export default async function AdminPage() {
     },
     {
       label: "Lead storage",
-      ok: !onVercel,
-      detail: onVercel
-        ? "SQLite is running in ephemeral storage on Vercel: rows are lost on redeploy or when the instance recycles. Email is currently the only durable record."
-        : "Local SQLite file at data/homekey.db.",
+      ok: leadsAreDurable,
+      detail:
+        leadBackend === "postgres"
+          ? "Postgres. Leads survive redeploys."
+          : onVercel
+            ? "SQLite in ephemeral storage on Vercel: rows are lost on redeploy or when the instance recycles. Set POSTGRES_URL to store leads durably; email is the only durable record until then."
+            : "Local SQLite file at data/homekey.db.",
     },
     {
       label: `Curator LLM (${activeProvider})`,
