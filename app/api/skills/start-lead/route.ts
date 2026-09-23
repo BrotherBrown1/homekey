@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
-import { db, schema } from "@/lib/db";
+import { saveLead } from "@/lib/leads-store";
 import { notifyLead } from "@/lib/notify";
 
 // Lightweight lead capture fired the moment a buyer finishes the first
@@ -22,20 +22,23 @@ export async function POST(request: NextRequest) {
     const data = starterSchema.parse(body);
 
     const id = randomUUID();
-    await db.insert(schema.leads).values({
-      id,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      phone: data.phone,
-      zip: null,
-      state: null,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      criteria: {} as any,
-      matchedGrantIds: [],
-      wantsRealtor: false,
-      wantsDigest: true,
-    });
+    try {
+      await saveLead({
+        id,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        zip: null,
+        state: null,
+        criteria: {},
+        matchedGrantIds: [],
+        wantsRealtor: false,
+        wantsDigest: true,
+      });
+    } catch (e) {
+      console.error("[start-lead] storage failed for lead", id, e);
+    }
 
     const notified = await notifyLead({
       firstName: data.firstName,

@@ -169,10 +169,13 @@ export default function OnboardingPage() {
 
     const criteria = toCriteria(form);
 
-    // Save the lead with the full profile + matches. A network blip must not
-    // strand the buyer, so failures are logged and the funnel continues.
+    // Save the lead with the full profile + matches. A failure here must not
+    // strand the buyer — they still get their results — but we must not then
+    // claim their details were saved, so `saved=1` is only set on success and
+    // the results page falls back to asking for contact details again.
+    let captured = false;
     try {
-      await fetch("/api/skills/capture-lead", {
+      const res = await fetch("/api/skills/capture-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -187,6 +190,9 @@ export default function OnboardingPage() {
           wantsDigest: true,
         }),
       });
+      const data = await res.json().catch(() => null);
+      captured = res.ok && data?.success === true;
+      if (!captured) console.error("capture-lead did not save the lead", data);
     } catch (err) {
       console.error("capture-lead failed", err);
     }
@@ -196,7 +202,7 @@ export default function OnboardingPage() {
     Object.entries(criteria).forEach(([k, v]) => {
       if (v !== undefined && v !== "") params.set(k, String(v));
     });
-    params.set("saved", "1");
+    if (captured) params.set("saved", "1");
     router.push(`/results?${params.toString()}`);
   }
 
