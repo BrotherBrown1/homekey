@@ -3,7 +3,7 @@
  *
  * For each active grant in the DB:
  *   1. Fetch its source URL (HTML).
- *   2. Ask watsonx.ai whether the program has changed (amount, eligibility,
+ *   2. Ask the configured LLM whether the program has changed (amount, eligibility,
  *      status, application URL) — strictly comparing to the stored copy.
  *   3. If yes, POST a proposal to /api/skills/upsert-grant for human review.
  *
@@ -17,7 +17,7 @@
  */
 
 import { listActiveGrants } from "../lib/matcher";
-import { chatJson, isConfigured } from "../lib/watsonx";
+import { chatJson, isConfigured, activeProvider } from "../lib/llm";
 import { BRAND } from "../lib/config";
 
 const ADMIN_BASE = process.env.HOMEKEY_API_BASE ?? "http://localhost:3000";
@@ -131,7 +131,7 @@ async function proposeChange(
 async function main() {
   if (!isConfigured()) {
     console.error(
-      "⚠️  watsonx.ai is not configured. Set IBM_CLOUD_API_KEY + WATSONX_PROJECT_ID in .env.local."
+      `⚠️  No LLM credentials for the active provider (${activeProvider}). Set ANTHROPIC_API_KEY in .env.local (or IBM_CLOUD_API_KEY + WATSONX_PROJECT_ID for watsonx).`
     );
     process.exit(1);
   }

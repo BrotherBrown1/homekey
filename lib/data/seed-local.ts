@@ -407,4 +407,161 @@ export const LOCAL_GRANTS: NewGrant[] = [
     status: "active",
     lastVerified: today,
   },
+
+  // ===== MICHIGAN — METRO DETROIT (deepened coverage) =====
+  {
+    id: "mi-detroit-dpa",
+    name: "Detroit Down Payment Assistance Program",
+    sponsor: "City of Detroit Housing & Revitalization Department",
+    level: "city",
+    state: "MI",
+    county: "Wayne",
+    city: "Detroit",
+    programType: "grant",
+    amountMin: null,
+    amountMax: 25000,
+    amountDescription: "Up to $25,000 grant for down payment, closing costs, and rate buy-down",
+    eligibility: {
+      firstTimeBuyerOnly: true,
+      maxIncomeAmiPct: 80,
+      ownerOccupiedRequired: true,
+      homebuyerEducationRequired: true,
+      notes:
+        "Must have lived in Detroit for the last 12 months (or lost a Detroit home to tax foreclosure 2010-2016). No ownership interest in property in the last 3 years. Buyer contributes at least $1,000. Housing expense ratio capped at 35%. Assistance cannot exceed 50% of purchase price + costs. Funded by CDBG / CDBG-DR; rounds open and close as funds allow.",
+    },
+    summary:
+      "Detroit's flagship grant: up to $25,000 toward your down payment and closing costs, forgiven, not repaid.",
+    detailedRequirements:
+      "Household income at or below 80% of Area Median Income for the City of Detroit. Detroit resident for the previous 12 months, or evidence of losing a Detroit home to property-tax foreclosure between 2010 and 2016. No marketable interest in property in the last 3 years. Minimum $1,000 buyer contribution. Housing expense ratio no more than 35%. Home must be in Detroit and be the primary residence. HUD-approved homebuyer education required. Priority for residents affected by the August 2023 flooding.",
+    applicationUrl:
+      "https://detroitmi.gov/departments/housing-and-revitalization-department/homebuyers/detroit-down-payment-assistance-program/apply-now",
+    sourceUrl:
+      "https://detroitmi.gov/departments/housing-and-revitalization-department/homebuyers/detroit-down-payment-assistance-program",
+    tags: ["first-time-buyer", "low-income", "down-payment-assistance", "grant"],
+    status: "active",
+    lastVerified: today,
+  },
+  {
+    id: "mi-wayne-county-dpa",
+    name: "Wayne County Down Payment Assistance Program",
+    sponsor: "Wayne County (administered by National Faith Homebuyers)",
+    level: "county",
+    state: "MI",
+    county: "Wayne",
+    city: null,
+    programType: "forgivable_loan",
+    amountMin: null,
+    amountMax: 13999,
+    amountDescription: "$13,999 at 0% interest, fully forgiven after 5 years",
+    eligibility: {
+      firstTimeBuyerOnly: true,
+      maxIncomeAmiPct: 80,
+      maxPurchasePrice: 219000,
+      ownerOccupiedRequired: true,
+      homebuyerEducationRequired: true,
+      excludedCities: ["Detroit", "Dearborn", "Dearborn Heights", "Livonia", "Redford", "Taylor", "Westland", "Canton", "Lincoln Park"],
+      notes:
+        "For Wayne County communities outside the cities that run their own HOME programs: NOT available in Detroit, Dearborn, Dearborn Heights, Livonia, Redford, Taylor, Westland, Canton, or Lincoln Park (those have separate programs). Liquid assets capped at $20,000. Home must pass a Housing Quality Standards inspection.",
+    },
+    summary:
+      "A fixed $13,999 forgivable loan for first-time buyers in Wayne County's smaller communities, from Allen Park to Grosse Pointe.",
+    detailedRequirements:
+      "Household income at or below 80% of Area Median Income. No ownership interest in real estate in the past 3 years. Maximum purchase price $219,000. Liquid assets under $20,000. Home must be in an eligible Wayne County community (excludes Detroit, Dearborn, Dearborn Heights, Livonia, Redford, Taylor, Westland, Canton, Lincoln Park) and pass HQS inspection. HUD-approved homebuyer education required. 0% interest, forgiven after 5 years of owner occupancy.",
+    applicationUrl: "https://nationalfaith.org/dpa/wayne/",
+    sourceUrl: "https://nationalfaith.org/dpa/wayne/",
+    tags: ["first-time-buyer", "low-income", "down-payment-assistance", "forgivable"],
+    status: "active",
+    lastVerified: today,
+  },
+  {
+    id: "mi-taylor-dpa",
+    name: "Taylor Home Down Payment Assistance Program",
+    sponsor: "City of Taylor (administered by National Faith Homebuyers)",
+    level: "city",
+    state: "MI",
+    county: "Wayne",
+    city: "Taylor",
+    programType: "forgivable_loan",
+    amountMin: null,
+    amountMax: 40000,
+    amountDescription: "Up to $40,000 forgivable assistance (HOME funds)",
+    eligibility: {
+      firstTimeBuyerOnly: true,
+      maxIncomeAmiPct: 80,
+      ownerOccupiedRequired: true,
+      homebuyerEducationRequired: true,
+      notes:
+        "Restarted June 2026 with the per-household cap raised to $40,000. Assistance up to about $14,000 carries a 5-year forgivable lien; larger awards carry a longer (10-year) forgiveness period. Buyer contributes at least $1,000. Home must be in Taylor, pass a Housing Quality Standards inspection, and meet city code.",
+    },
+    summary:
+      "One of the largest city programs in Metro Detroit: up to $40,000 in forgivable down payment help for buying in Taylor.",
+    detailedRequirements:
+      "Federal HOME-funded, so household income must be at or below 80% of Area Median Income. First-time buyer (no ownership in 3 years). Minimum $1,000 buyer contribution. Property located in the City of Taylor, owner-occupied as primary residence, passes HQS inspection and city building code. Forgivable lien: 5 years for awards up to roughly $14,000, 10 years for larger awards. Homebuyer education required.",
+    applicationUrl: "https://www.cityoftaylor.com/1479/Down-Payment-Assistance",
+    sourceUrl: "https://www.cityoftaylor.com/1479/Down-Payment-Assistance",
+    tags: ["first-time-buyer", "low-income", "down-payment-assistance", "forgivable"],
+    status: "active",
+    lastVerified: today,
+  },
+  {
+    id: "mi-oakland-treasurer-hap",
+    name: "Oakland County Homebuyer Assistance Program",
+    sponsor: "Oakland County Treasurer (with Independent Bank)",
+    level: "county",
+    state: "MI",
+    county: "Oakland",
+    city: null,
+    programType: "grant",
+    amountMin: null,
+    amountMax: 5000,
+    amountDescription: "$5,000 grant per household for down payment and closing costs",
+    eligibility: {
+      firstTimeBuyerOnly: true,
+      maxIncomeAmiPct: 120,
+      ownerOccupiedRequired: true,
+      homebuyerEducationRequired: true,
+      notes:
+        "Mortgage must be financed through Independent Bank. Buyer contributes at least $1,000. Property must be the principal year-round residence in Oakland County. Applications accepted while funds last.",
+    },
+    summary:
+      "A straightforward $5,000 grant for first-time buyers anywhere in Oakland County, with a generous 120% AMI income limit.",
+    detailedRequirements:
+      "Qualifying household income at or below 120% of Oakland County Area Median Income. First home purchase. Property located in Oakland County and occupied as the principal residence. Minimum $1,000 of the buyer's own funds. Pre-purchase counseling through an approved homeownership counseling program. Independent Bank must provide the purchase mortgage.",
+    applicationUrl: "https://www.independentbank.com/oaklandcounty",
+    sourceUrl:
+      "https://www.oakgov.com/government/oakland-county-treasurer-s-office/financial-empowerment-center/homebuyer-assistance-program",
+    tags: ["first-time-buyer", "down-payment-assistance", "grant"],
+    status: "active",
+    lastVerified: today,
+  },
+  {
+    id: "mi-washtenaw-map",
+    name: "Washtenaw County Mortgage Assistance Program",
+    sponsor: "Washtenaw County Office of Community & Economic Development",
+    level: "county",
+    state: "MI",
+    county: "Washtenaw",
+    city: null,
+    programType: "deferred_loan",
+    amountMin: null,
+    amountMax: null,
+    amountDescription: "Deferred-payment down payment loan; amount set by county guidelines",
+    eligibility: {
+      firstTimeBuyerOnly: true,
+      maxIncomeAmiPct: 80,
+      ownerOccupiedRequired: true,
+      homebuyerEducationRequired: true,
+      notes:
+        "Silent second mortgage: no monthly payments, 3% simple interest, 30-year term, repaid when the home is sold or refinanced. Countywide, including Ann Arbor and Ypsilanti. Confirm the current maximum award with the county before relying on a figure.",
+    },
+    summary:
+      "Washtenaw County's silent-second down payment loan for first-time buyers at or below 80% of area median income, including Ann Arbor.",
+    detailedRequirements:
+      "Household income at or below 80% of Washtenaw County Area Median Income, adjusted for household size. First-time homebuyer. Owner-occupied primary residence in Washtenaw County. Homebuyer education required. Deferred payment loan at 3% simple interest with a 30-year term; due on sale, transfer, or refinance.",
+    applicationUrl: "https://www.washtenaw.org/homebuyer-assistance",
+    sourceUrl: "https://www.washtenaw.org/homebuyer-assistance",
+    tags: ["first-time-buyer", "low-income", "down-payment-assistance"],
+    status: "active",
+    lastVerified: today,
+  },
 ];

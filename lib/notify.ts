@@ -3,9 +3,11 @@
 // because it works from Vercel's edge with no SDK and has a generous
 // free tier (100 emails/day, no domain required).
 //
-// If RESEND_API_KEY is missing, the function logs and returns silently
-// so the request still succeeds — we never want a failed notification
-// to break the buyer's experience.
+// If RESEND_API_KEY is missing, the function logs and returns a "skipped"
+// result so the request still succeeds — we never want a failed
+// notification to break the buyer's experience. Callers should still
+// AWAIT this: on serverless, work left running after the response is
+// returned may never execute.
 
 import { BRAND } from "./config";
 
@@ -58,11 +60,19 @@ function html(lead: LeadNotification) {
 </body></html>`;
 }
 
-export async function notifyLead(lead: LeadNotification): Promise<void> {
+export type NotifyResult =
+  | { ok: true }
+  | { ok: false; reason: "not_configured" | "api_error" | "network_error"; detail?: string };
+
+export async function notifyLead(lead: LeadNotification): Promise<NotifyResult> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    console.log("[notifyLead] RESEND_API_KEY not set — skipping email; lead persisted to DB only");
-    return;
+    console.error(
+      "[notifyLead] RESEND_API_KEY is not set — this lead was NOT emailed. " +
+        "On Vercel the SQLite file lives in ephemeral storage, so without email " +
+        "the lead may be lost. Set RESEND_API_KEY in the project environment."
+    );
+    return { ok: false, reason: "not_configured" };
   }
 
   const from = process.env.LEAD_NOTIFY_FROM ?? `${BRAND.name} <onboarding@resend.dev>`;
@@ -86,8 +96,11 @@ export async function notifyLead(lead: LeadNotification): Promise<void> {
     if (!res.ok) {
       const body = await res.text();
       console.error("[notifyLead] Resend error", res.status, body);
+      return { ok: false, reason: "api_error", detail: `${res.status} ${body}` };
     }
+    return { ok: true };
   } catch (err) {
     console.error("[notifyLead] fetch failed", err);
+    return { ok: false, reason: "network_error", detail: String(err) };
   }
 }

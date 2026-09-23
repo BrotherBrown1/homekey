@@ -61,38 +61,6 @@ const ORG_JSONLD = {
   },
 };
 
-const FAQ_JSONLD = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "What are first-time home buyer grants?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text:
-          "Grants are funds you don't pay back, given by federal, state, county, and city housing agencies to help first-time buyers cover down payment and closing costs. They're combined with a standard mortgage and can stack up to $30,000+ in some markets.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: `Is ${BRAND.name} free?`,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: `Yes. ${BRAND.name} is a free public-service tool for first-time home buyers. We never charge buyers, never pull credit, and never sell your data.`,
-      },
-    },
-    {
-      "@type": "Question",
-      name: "How current is the grant data?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: `${BRAND.name} watches every housing authority in the country and updates the database within a week of any change — funding windows, eligibility shifts, new programs, or closed programs.`,
-      },
-    },
-  ],
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -102,10 +70,6 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSONLD) }}
         />
         <header className="sticky top-0 z-30 border-b border-zinc-200/70 bg-white/85 backdrop-blur-md">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
@@ -126,6 +90,9 @@ export default function RootLayout({
               </Link>
               <Link href="/#how" className="hidden hover:text-zinc-950 sm:inline">
                 How it works
+              </Link>
+              <Link href="/faq" className="hidden hover:text-zinc-950 sm:inline">
+                FAQ
               </Link>
               <Link
                 href="/onboarding"
@@ -153,6 +120,9 @@ export default function RootLayout({
                 First-time home buyer grant finder. Federal, state, county, and
                 city programs.
               </p>
+              <Link href="/faq" className="mt-4 inline-block text-sm text-zinc-950 underline-offset-4 hover:underline">
+                Grants FAQ
+              </Link>
             </div>
             <div className="text-sm">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">

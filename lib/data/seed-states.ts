@@ -989,4 +989,124 @@ export const STATE_GRANTS: NewGrant[] = [
     applicationUrl: "https://dhcd.dc.gov/page/home-purchase-assistance-program-hpap",
     sourceUrl: "https://dhcd.dc.gov/", tags: ["first-time-buyer", "low-income", "down-payment-assistance"], status: "active", lastVerified: today,
   },
+
+  // ===== MICHIGAN — statewide programs delivered through lenders =====
+  {
+    id: "mi-mshda-mcc",
+    name: "MSHDA Mortgage Credit Certificate (MCC)",
+    sponsor: "Michigan State Housing Development Authority",
+    level: "state",
+    state: "MI",
+    county: null,
+    city: null,
+    programType: "tax_credit",
+    amountMin: null,
+    amountMax: 2000,
+    amountDescription: "Federal tax credit worth 20% of mortgage interest, up to $2,000 every year for the life of the loan",
+    eligibility: {
+      firstTimeBuyerOnly: true,
+      ownerOccupiedRequired: true,
+      notes:
+        "Repeat buyers qualify in federally designated targeted areas. Only pairs with non-MSHDA mortgages (FHA, VA, USDA, conventional). MSHDA income and purchase-price limits apply by county. Must be obtained through an MSHDA MCC lending partner at the time of purchase; it cannot be added later.",
+    },
+    summary:
+      "Not a one-time grant but a raise: 20% of your mortgage interest comes back as a federal tax credit every year you own the home, up to $2,000.",
+    detailedRequirements:
+      "First-time homebuyer statewide, or any buyer in a targeted area. Home must be the principal residence in Michigan. Mortgage must be a non-MSHDA loan (FHA, VA, RD, or conventional) originated by an MSHDA MCC participating lender. Household income and purchase price within MSHDA limits for the county. Credit equals 20% of annual mortgage interest paid, capped at $2,000 per year, for the life of the original mortgage while the home remains the principal residence. Remaining interest is still deductible.",
+    applicationUrl: "https://www.michigan.gov/mshda/pathway-to-housing/lender-list-for-mcc",
+    sourceUrl: "https://www.michigan.gov/mshda/pathway-to-housing/mortgage-credit-certificate-program",
+    tags: ["first-time-buyer", "tax-credit", "stackable"],
+    status: "active",
+    lastVerified: today,
+  },
+  {
+    id: "mi-fhlbi-homeboost",
+    name: "FHLBank Indianapolis HomeBoost Down Payment Assistance",
+    sponsor: "Federal Home Loan Bank of Indianapolis (via member banks and credit unions)",
+    level: "state",
+    state: "MI",
+    county: null,
+    city: null,
+    programType: "grant",
+    amountMin: null,
+    amountMax: 25000,
+    amountDescription: "Up to $25,000 grant for first-generation, first-time buyers",
+    eligibility: {
+      firstTimeBuyerOnly: true,
+      maxIncomeAmiPct: 120,
+      ownerOccupiedRequired: true,
+      homebuyerEducationRequired: true,
+      notes:
+        "First-generation buyer: neither you nor your parents have owned a home (or you were in foster care). Funds are first-come, first-served each round (2026 round opened July 8) and are requested by a participating lender on your behalf. Also available in Indiana.",
+    },
+    summary:
+      "If your parents never owned a home, this is the biggest grant in Michigan: up to $25,000 through participating banks and credit unions.",
+    detailedRequirements:
+      "First-time homebuyer who is also first-generation (no parent owned a home). Household income at or below 120% of Area Median Income. Primary residence in Michigan or Indiana. Homebuyer counseling required. Funds requested through a participating FHLBank Indianapolis member lender while the annual allocation lasts. Covers down payment, closing, and counseling costs.",
+    applicationUrl: "https://www.fhlbi.com/services/community-programs/homeboost-down-payment-assistance-/",
+    sourceUrl: "https://www.fhlbi.com/services/community-programs/homeboost-down-payment-assistance-/",
+    tags: ["first-time-buyer", "first-generation", "down-payment-assistance", "grant"],
+    status: "active",
+    lastVerified: today,
+  },
+  {
+    id: "mi-fhlbi-hop",
+    name: "FHLBank Indianapolis Homeownership Opportunities Program (HOP)",
+    sponsor: "Federal Home Loan Bank of Indianapolis (via member banks and credit unions)",
+    level: "state",
+    state: "MI",
+    county: null,
+    city: null,
+    programType: "grant",
+    amountMin: 1000,
+    amountMax: 20000,
+    amountDescription: "Up to $20,000 for down payment, closing, and counseling costs",
+    eligibility: {
+      firstTimeBuyerOnly: true,
+      maxIncomeAmiPct: 80,
+      ownerOccupiedRequired: true,
+      homebuyerEducationRequired: true,
+      notes:
+        "Requested by a participating member lender; funds are limited each year. Retention period applies (grant is repaid on a pro-rated basis if the home is sold within 5 years). Also available in Indiana.",
+    },
+    summary:
+      "Up to $20,000 toward your first home for households under 80% of area median income, through local banks and credit unions.",
+    detailedRequirements:
+      "First-time homebuyer with household income at or below 80% of Area Median Income. Primary residence in Michigan or Indiana. Homebuyer counseling required. Minimum request $1,000, maximum $20,000 per household. Funds are accessed through a participating FHLBank Indianapolis member financial institution and are subject to availability. Five-year retention agreement.",
+    applicationUrl:
+      "https://www.fhlbi.com/services/community-programs/homeownership-initiatives/homeownership-opportunity-program/",
+    sourceUrl:
+      "https://www.fhlbi.com/services/community-programs/homeownership-initiatives/homeownership-opportunity-program/",
+    tags: ["first-time-buyer", "low-income", "down-payment-assistance", "grant"],
+    status: "active",
+    lastVerified: today,
+  },
+  {
+    id: "mi-flagstar-gift",
+    name: "Flagstar Gift Program",
+    sponsor: "Flagstar Bank",
+    level: "state",
+    state: "MI",
+    county: null,
+    city: null,
+    programType: "grant",
+    amountMin: null,
+    amountMax: 7500,
+    amountDescription: "3% of the purchase price gifted for the down payment, up to $7,500",
+    eligibility: {
+      firstTimeBuyerOnly: true,
+      ownerOccupiedRequired: true,
+      notes:
+        "Lender program: the mortgage must be through Flagstar. For low- to moderate-income borrowers or homes in low- to moderate-income areas. Eligible Michigan counties include Wayne, Oakland, Macomb, Washtenaw, Livingston, Monroe, Genesee, Ingham, Kent, Kalamazoo, and others. Stacks with MSHDA down payment assistance.",
+    },
+    summary:
+      "Flagstar gifts your 3% down payment outright, so you can close with little or no cash out of pocket.",
+    detailedRequirements:
+      "First-time homebuyer purchasing a primary residence in an eligible Michigan county. Borrower income or property location must be low- to moderate-income per the bank's guidelines. Mortgage originated by Flagstar Bank. Gift covers 3% of the purchase price, up to $7,500, and is not repaid. Confirm current county list and terms with Flagstar.",
+    applicationUrl: "https://www.flagstar.com/personal/borrow/home-loans/community-loans.html",
+    sourceUrl: "https://www.flagstar.com/personal/borrow/home-loans/community-loans.html",
+    tags: ["first-time-buyer", "down-payment-assistance", "grant", "stackable"],
+    status: "active",
+    lastVerified: today,
+  },
 ];

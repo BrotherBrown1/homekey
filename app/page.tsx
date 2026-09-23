@@ -101,7 +101,7 @@ export default function HomePage() {
           <CtaPair
             tone="dark"
             primary={{ href: "/onboarding", label: "Get started" }}
-            secondary={{ href: "#community", label: "About this project" }}
+            secondary={{ href: "/faq", label: "Read the FAQ" }}
           />
         </div>
       </FullBleed>

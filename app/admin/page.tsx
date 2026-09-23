@@ -1,5 +1,6 @@
 import { db, schema, ensureSeeded } from "@/lib/db";
 import { desc, eq } from "drizzle-orm";
+import { isConfigured as llmConfigured, activeProvider } from "@/lib/llm";
 
 export const dynamic = "force-dynamic";
 
@@ -23,12 +24,81 @@ export default async function AdminPage() {
 
   const activeGrants = grants.filter((g) => g.status === "active").length;
 
+  // Configuration health. These are the settings that silently break the
+  // site in production, so surface them where they'll actually be seen.
+  const onVercel = Boolean(process.env.VERCEL);
+  const checks: Array<{ label: string; ok: boolean; detail: string }> = [
+    {
+      label: "Lead email notifications",
+      ok: Boolean(process.env.RESEND_API_KEY),
+      detail: process.env.RESEND_API_KEY
+        ? `Sending to ${process.env.LEAD_NOTIFY_TO ?? "the address in lib/config.ts"}.`
+        : "RESEND_API_KEY is not set. New leads are NOT emailed to you.",
+    },
+    {
+      label: "Lead storage",
+      ok: !onVercel,
+      detail: onVercel
+        ? "SQLite is running in ephemeral storage on Vercel: rows are lost on redeploy or when the instance recycles. Email is currently the only durable record."
+        : "Local SQLite file at data/homekey.db.",
+    },
+    {
+      label: `Curator LLM (${activeProvider})`,
+      ok: llmConfigured(),
+      detail: llmConfigured()
+        ? "Credentials present; the weekly source re-check can run."
+        : "No API key for the active provider. The weekly Curator cannot run, so the \"updated within 7 days\" claim does not hold.",
+    },
+    {
+      label: "Demo data",
+      ok: process.env.DEMO_MODE === "false",
+      detail:
+        process.env.DEMO_MODE === "false"
+          ? "Disabled. Leads below are real."
+          : "DEMO_MODE is not \"false\", so sample leads and Curator entries are seeded on a cold start.",
+    },
+  ];
+  const failing = checks.filter((c) => !c.ok).length;
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">
       <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">Admin</h1>
       <p className="mt-2 text-zinc-600">
         Database state + pending Curator agent proposals + recent leads.
       </p>
+
+      {/* Configuration health */}
+      <section className="mt-8">
+        <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-zinc-500">
+          Configuration
+          {failing > 0 && (
+            <span className="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium normal-case tracking-normal text-red-800">
+              {failing} need{failing === 1 ? "s" : ""} attention
+            </span>
+          )}
+        </h2>
+        <div className="mt-3 divide-y divide-zinc-200 overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+          {checks.map((c) => (
+            <div key={c.label} className="flex items-start gap-3 p-4">
+              <span
+                aria-hidden
+                className={`mt-0.5 inline-flex h-5 w-5 flex-none items-center justify-center rounded-full text-xs font-bold ${
+                  c.ok ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
+                }`}
+              >
+                {c.ok ? "\u2713" : "!"}
+              </span>
+              <div>
+                <p className="text-sm font-medium text-zinc-900">
+                  {c.label}
+                  <span className="sr-only">: {c.ok ? "OK" : "needs attention"}</span>
+                </p>
+                <p className="mt-0.5 text-sm text-zinc-600">{c.detail}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Stats */}
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
