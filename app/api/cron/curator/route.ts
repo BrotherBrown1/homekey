@@ -7,7 +7,7 @@
 
 import { NextRequest } from "next/server";
 import { listActiveGrants } from "@/lib/matcher";
-import { chatJson, isConfigured } from "@/lib/watsonx";
+import { chatJson, isConfigured, activeProvider } from "@/lib/llm";
 import { db, schema } from "@/lib/db";
 import { randomUUID } from "node:crypto";
 import { BRAND } from "@/lib/config";
@@ -67,7 +67,14 @@ export async function GET(request: NextRequest) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
   if (!isConfigured()) {
-    return Response.json({ error: "watsonx not configured" }, { status: 500 });
+    return Response.json(
+      {
+        error: "LLM provider not configured",
+        detail:
+          `No credentials for the active provider (${activeProvider}). Set ANTHROPIC_API_KEY (and optionally LLM_PROVIDER=anthropic) in the deployment environment.`,
+      },
+      { status: 500 }
+    );
   }
 
   const all = await listActiveGrants();

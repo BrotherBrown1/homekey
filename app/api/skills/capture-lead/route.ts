@@ -38,7 +38,10 @@ export async function POST(request: NextRequest) {
       wantsDigest: data.wantsDigest,
     });
 
-    notifyLead({
+    // Awaited on purpose: a promise left pending after the response is sent
+    // is not guaranteed to run on serverless, and the email is currently the
+    // only durable record of the lead.
+    const notified = await notifyLead({
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
@@ -48,7 +51,10 @@ export async function POST(request: NextRequest) {
       wantsRealtor: data.wantsRealtor,
       matchedGrantIds: data.matchedGrantIds,
       criteria: data.criteria,
-    }).catch((e) => console.error("notifyLead failed", e));
+    });
+    if (!notified.ok) {
+      console.error("[capture-lead] lead", id, "was not emailed:", notified.reason);
+    }
 
     return Response.json({
       success: true,

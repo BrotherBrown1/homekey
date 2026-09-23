@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       wantsDigest: true,
     });
 
-    notifyLead({
+    const notified = await notifyLead({
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
@@ -47,7 +47,10 @@ export async function POST(request: NextRequest) {
       wantsRealtor: false,
       matchedGrantIds: [],
       criteria: { stage: "started" },
-    }).catch((e) => console.error("notifyLead (starter) failed", e));
+    });
+    if (!notified.ok) {
+      console.error("[start-lead] lead", id, "was not emailed:", notified.reason);
+    }
 
     return Response.json({ success: true, leadId: id });
   } catch (err) {
