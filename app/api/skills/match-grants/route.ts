@@ -26,9 +26,10 @@ export async function POST(request: NextRequest) {
     const buyer = buyerSchema.parse(body);
     const { useAi, limit, ...criteria } = buyer;
 
+    // The AI validator pass follows useAi, so useAi:false means no LLM calls.
     const matches = await matchGrants(
       { ...criteria, state: criteria.state.toUpperCase() },
-      { useAi, limit }
+      { useAi, validate: useAi, limit }
     );
 
     return Response.json({

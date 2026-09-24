@@ -74,7 +74,7 @@ ${JSON.stringify(items, null, 2)}`;
   try {
     const data = await chatJson<ValidatorResponse>(
       [{ role: "user", content: prompt }],
-      { temperature: 0.1, maxTokens: 2000 }
+      { temperature: 0.1 }
     );
 
     const verdictMap = new Map<string, { verdict: ValidationVerdict; reason: string }>();
@@ -153,7 +153,7 @@ Decide if this specific buyer plausibly qualifies. Return JSON only:
   try {
     const data = await chatJson<{ verdict: ValidationVerdict; reason: string }>(
       [{ role: "user", content: prompt }],
-      { temperature: 0.1, maxTokens: 300 }
+      { temperature: 0.1 }
     );
     return data;
   } catch (err) {

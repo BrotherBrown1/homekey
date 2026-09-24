@@ -34,7 +34,9 @@ export default async function ResultsPage({
   const params = await searchParams;
   const buyer = parseBuyer(params);
   const where = describeLocation(buyer);
-  const rawMatches = await matchGrants(buyer, { useAi: false, limit: 20 });
+  // Deterministic on purpose: no LLM call per page view, and the count
+  // matches the quiz teaser (which also runs without AI).
+  const rawMatches = await matchGrants(buyer, { useAi: false, validate: false, limit: 20 });
 
   // Sort: best matches first (Optimal > Great > Good), then within each tier
   // surface true grants before loan-shaped programs. Buyers came for grants,
