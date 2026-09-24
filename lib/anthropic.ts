@@ -6,13 +6,23 @@
  *
  * Env vars (set in .env.local + Vercel):
  *   ANTHROPIC_API_KEY     - your Anthropic API key (console.anthropic.com)
- *   ANTHROPIC_MODEL       - optional; defaults to claude-opus-4-7 (the highest)
+ *   ANTHROPIC_MODEL       - optional; defaults to claude-opus-5
+ *
+ * Current-model API rules this file follows:
+ *   - No `temperature`: Claude Opus 4.7 and later reject sampling
+ *     parameters with a 400, so the option is accepted for interface
+ *     compatibility with watsonx and deliberately not sent.
+ *   - Thinking is adaptive by default and counts toward `max_tokens`, so
+ *     the default ceiling is generous; control depth with `effort`.
+ *   - Server-side fallbacks are enabled: if the model declines a request on
+ *     policy grounds, the API re-runs it on a fallback model in the same
+ *     call instead of returning nothing.
  */
 
 import Anthropic from "@anthropic-ai/sdk";
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY ?? "";
-const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL ?? "claude-opus-4-7";
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL ?? "claude-opus-5";
 
 let cached: Anthropic | null = null;
 
@@ -34,10 +44,15 @@ export type ChatMessage = {
 };
 
 export type ChatOptions = {
+  /** Accepted for watsonx compatibility; not sent to Claude (see header). */
   temperature?: number;
   maxTokens?: number;
   jsonMode?: boolean;
   model?: string;
+  /** Thinking depth / token spend. Omit for the model default. */
+  effort?: "low" | "medium" | "high" | "xhigh" | "max";
+  /** Per-request timeout in milliseconds. */
+  timeoutMs?: number;
 };
 
 export async function chat(
@@ -55,30 +70,42 @@ export async function chat(
     )
     .map((m) => ({ role: m.role, content: m.content }));
 
-  // For JSON mode we strengthen the system prompt — Claude doesn't have a
-  // dedicated response_format flag, but it follows format instructions well.
   if (options.jsonMode) {
     systemParts.push(
       "Respond with a single valid JSON object only. No prose, no markdown fences, no commentary before or after."
     );
   }
 
-  const resp = await client().messages.create({
-    model: options.model ?? ANTHROPIC_MODEL,
-    max_tokens: options.maxTokens ?? 1500,
-    temperature: options.temperature ?? 0.3,
-    system: systemParts.length ? systemParts.join("\n\n") : undefined,
-    messages: turns,
-  });
+  const resp = await client().beta.messages.create(
+    {
+      model: options.model ?? ANTHROPIC_MODEL,
+      max_tokens: options.maxTokens ?? 16000,
+      system: systemParts.length ? systemParts.join("\n\n") : undefined,
+      messages: turns,
+      ...(options.effort ? { output_config: { effort: options.effort } } : {}),
+      betas: ["server-side-fallback-2026-07-01"],
+      fallbacks: "default",
+    },
+    options.timeoutMs ? { timeout: options.timeoutMs } : undefined
+  );
 
-  // Concatenate all text blocks from the response.
+  // Check why generation stopped before trusting the content.
+  if (resp.stop_reason === "refusal") {
+    const why = resp.stop_details?.explanation ?? resp.stop_details?.category ?? "no detail";
+    throw new Error(`Claude declined the request (${why}).`);
+  }
+
   const text = resp.content
-    .filter((b): b is Anthropic.TextBlock => b.type === "text")
+    .filter((b): b is Anthropic.Beta.BetaTextBlock => b.type === "text")
     .map((b) => b.text)
     .join("");
 
   if (!text) {
-    throw new Error(`Anthropic returned no text content: ${JSON.stringify(resp)}`);
+    throw new Error(
+      resp.stop_reason === "max_tokens"
+        ? "Claude hit max_tokens before producing an answer; raise maxTokens or lower effort."
+        : `Claude returned no text (stop_reason: ${resp.stop_reason}).`
+    );
   }
   return text;
 }

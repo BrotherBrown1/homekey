@@ -2,6 +2,7 @@ import { db, schema, ensureSeeded } from "@/lib/db";
 import { desc, eq } from "drizzle-orm";
 import { isConfigured as llmConfigured, activeProvider } from "@/lib/llm";
 import { listRecentLeads, leadBackend, leadsAreDurable } from "@/lib/leads-store";
+import { sheetsConfigured } from "@/lib/sheets";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +46,21 @@ export default async function AdminPage() {
           : onVercel
             ? "SQLite in ephemeral storage on Vercel: rows are lost on redeploy or when the instance recycles. Set POSTGRES_URL to store leads durably; email is the only durable record until then."
             : "Local SQLite file at data/homekey.db.",
+    },
+    {
+      label: "Google Sheet",
+      ok: sheetsConfigured,
+      detail: sheetsConfigured
+        ? "Every lead and grant check is written to your spreadsheet."
+        : "GOOGLE_SHEETS_WEBHOOK_URL is not set, so nothing is written to the spreadsheet.",
+    },
+    {
+      label: "Daily grant check",
+      ok: Boolean(process.env.CRON_SECRET) || !onVercel,
+      detail:
+        process.env.CRON_SECRET || !onVercel
+          ? "Scheduled daily; every program is re-checked once a week."
+          : "CRON_SECRET is not set, so the daily grant check refuses to run.",
     },
     {
       label: `Curator LLM (${activeProvider})`,

@@ -64,14 +64,15 @@ export type NotifyResult =
   | { ok: true }
   | { ok: false; reason: "not_configured" | "api_error" | "network_error"; detail?: string };
 
-export async function notifyLead(lead: LeadNotification): Promise<NotifyResult> {
+/** Send an email through Resend to the realtor (or LEAD_NOTIFY_TO). */
+export async function sendEmail(args: {
+  subject: string;
+  html: string;
+  replyTo?: string;
+}): Promise<NotifyResult> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    console.error(
-      "[notifyLead] RESEND_API_KEY is not set — this lead was NOT emailed. " +
-        "On Vercel the SQLite file lives in ephemeral storage, so without email " +
-        "the lead may be lost. Set RESEND_API_KEY in the project environment."
-    );
+    console.error(`[email] RESEND_API_KEY is not set — "${args.subject}" was NOT sent.`);
     return { ok: false, reason: "not_configured" };
   }
 
@@ -88,19 +89,27 @@ export async function notifyLead(lead: LeadNotification): Promise<NotifyResult> 
       body: JSON.stringify({
         from,
         to,
-        reply_to: lead.email,
-        subject: `🏠 New ${BRAND.name} lead — ${lead.firstName} ${lead.lastName}${lead.wantsRealtor ? " (wants callback)" : ""}`,
-        html: html(lead),
+        ...(args.replyTo ? { reply_to: args.replyTo } : {}),
+        subject: args.subject,
+        html: args.html,
       }),
     });
     if (!res.ok) {
       const body = await res.text();
-      console.error("[notifyLead] Resend error", res.status, body);
+      console.error("[email] Resend error", res.status, body);
       return { ok: false, reason: "api_error", detail: `${res.status} ${body}` };
     }
     return { ok: true };
   } catch (err) {
-    console.error("[notifyLead] fetch failed", err);
+    console.error("[email] fetch failed", err);
     return { ok: false, reason: "network_error", detail: String(err) };
   }
+}
+
+export async function notifyLead(lead: LeadNotification): Promise<NotifyResult> {
+  return sendEmail({
+    subject: `🏠 New ${BRAND.name} lead — ${lead.firstName} ${lead.lastName}${lead.wantsRealtor ? " (wants callback)" : ""}`,
+    html: html(lead),
+    replyTo: lead.email,
+  });
 }

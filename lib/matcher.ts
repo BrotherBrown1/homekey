@@ -258,7 +258,7 @@ ${JSON.stringify(items, null, 2)}`;
       scores: Array<{ id: string; score: number; reasoning: string }>;
     }>(
       [{ role: "user", content: prompt }],
-      { temperature: 0.2, maxTokens: 2500 }
+      { temperature: 0.2 }
     );
 
     const map = new Map<string, { score: number; reasoning: string }>();
